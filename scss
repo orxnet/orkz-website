@@ -1,0 +1,4 @@
+#!/bin/bash
+pushd user/themes/antimatter
+scss --watch scss:css-compiled
+popd
