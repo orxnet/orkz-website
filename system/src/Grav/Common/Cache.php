@@ -2,7 +2,7 @@
 /**
  * @package    Grav.Common
  *
- * @copyright  Copyright (C) 2014 - 2016 RocketTheme, LLC. All rights reserved.
+ * @copyright  Copyright (C) 2014 - 2017 RocketTheme, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
@@ -17,6 +17,7 @@ use RocketTheme\Toolbox\Event\Event;
  * The GravCache object is used throughout Grav to store and retrieve cached data.
  * It uses DoctrineCache library and supports a variety of caching mechanisms. Those include:
  *
+ * APCu
  * APC
  * XCache
  * RedisCache
@@ -59,6 +60,14 @@ class Cache extends Getters
         'cache://compiled/',
         'cache://validated-',
         'cache://images',
+        'asset://',
+    ];
+
+    protected static $standard_remove_no_images = [
+        'cache://twig/',
+        'cache://doctrine/',
+        'cache://compiled/',
+        'cache://validated-',
         'asset://',
     ];
 
@@ -359,7 +368,12 @@ class Cache extends Getters
                 $remove_paths = self::$tmp_remove;
                 break;
             default:
-                $remove_paths = self::$standard_remove;
+                if (Grav::instance()['config']->get('system.cache.clear_images_by_default')) {
+                    $remove_paths = self::$standard_remove;
+                } else {
+                    $remove_paths = self::$standard_remove_no_images;
+                }
+
         }
 
         // Clearing cache event to add paths to clear
