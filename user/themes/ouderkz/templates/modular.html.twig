@@ -1,0 +1,78 @@
+{% extends 'partials/base.html.twig' %}
+
+{% set show_onpage_menu = header.onpage_menu == true or header.onpage_menu is null %}
+{% macro pageLinkName(text) %}{{ text|lower|replace({' ':'_'}) }}{% endmacro %}
+
+{% block javascripts %}
+    {% if show_onpage_menu %}
+        {% do assets.add('theme://js/singlePageNav.min.js') %}
+    {% endif %}
+    {{ parent() }}
+{% endblock %}
+
+{% block initial %}
+    <div id="welcome">
+        <div class="overlay-logo">
+            <img src="{{ url('theme://images/logo.png') }}" 
+                 data-magnify-src="{{ url('theme://images/logo-full.png') }}" />
+        </div>
+        <a class="overlay-button" href="#oude_rkz">
+            <span class="fa-stack fa-2x">
+                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                <i class="fa fa-arrow-down fa-stack-1x"></i>
+            </span>
+        </a>
+    </div>
+{% endblock %}
+
+{% block bottom %}
+    {{ parent() }}
+    {% if show_onpage_menu %}
+        <script>
+        // singlePageNav initialization & configuration
+        $('#navbar').singlePageNav({
+            offset: $('#header').outerHeight(),
+            filter: ':not(.external)',
+            updateHash: true,
+            currentClass: 'active'
+        });
+        </script>
+    {% endif %}
+    <div id="background-image-hires" style="display: none;"
+            data-rel="{{ url('theme://images/background-full.png') }}">
+        <div class="buttons" style="position: absolute; z-index: 10000;">
+            <button class="zoom-in">Zoom In</button>
+            <button class="zoom-out">Zoom Out</button>
+            <button class="reset">Reset</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block header_navigation %}
+    {% if show_onpage_menu %}
+        <ul class="navigation">
+        {% for module in page.collection() %}
+            {% set current_module = (module.active or module.activeChild) ? 'active' : '' %}
+            <li class="{{ current_module }}"><a href="#{{ _self.pageLinkName(module.menu) }}">{{ module.menu }}</a></li>
+        {% endfor %}
+        {% for mitem in site.menu %}
+            <li>
+                <a {% if mitem.class %}class="{{ mitem.class }}"{% endif %} href="{{ mitem.url }}">
+                    {% if mitem.icon %}<i class="fa fa-{{ mitem.icon }}"></i>{% endif %}
+                    {{ mitem.text }}
+                </a>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        {{  parent() }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {{ page.content }}
+    {% for module in page.collection() %}
+        <div id="{{ _self.pageLinkName(module.menu) }}"></div>
+        {{ module.content }}
+    {% endfor %}
+{% endblock %}

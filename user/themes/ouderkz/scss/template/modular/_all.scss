@@ -1,0 +1,74 @@
+@import "ouderkz";
+@import "features";
+@import "text";
+
+.rkzpage {
+	margin-bottom: 80px;
+
+	&.inverse {
+		color: #FFF;
+		a {color: #FFF;}
+	}
+
+	&.inverse-green {
+		color: #33FF00;
+		font-family: monospace;
+		font-size: 120%;
+		h2 {
+			font-family: monospace;
+		}
+		a {
+			color: #33FF00;
+		}
+	}
+
+	a {
+		background: transparent;
+		text-decoration: underline;
+	}
+
+	.rkzpage-inner {
+	    border-radius: 50px;
+	    padding: 30px;
+	    margin: 20px auto;
+	    width: 90%;
+	    position: relative;
+	    overflow: hidden;
+	}
+
+	&.image_left {
+		.decorative-image {
+			float: left;
+		}
+	}
+
+	&.image_right {
+		.decorative-image {
+			float: right;
+		}
+	}
+
+	&.image_right_bottom {
+		.decorative-image {
+			display: inline-block;
+			position: relative;
+			left: 30px;
+			z-index: 1;
+			float: right;
+			width: 40%;
+			min-width: 300px;
+		}
+
+		.rkzpage-inner {
+			&:after {
+			    content:"";
+			    display:table;
+			    clear:both;
+			}
+		}
+	}
+}
+
+
+
+
