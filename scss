@@ -1,4 +1,4 @@
 #!/bin/bash
-pushd user/themes/antimatter
+pushd user/themes/ouderkz
 scss --watch scss:css-compiled
 popd
