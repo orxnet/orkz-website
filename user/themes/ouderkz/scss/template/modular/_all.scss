@@ -39,12 +39,14 @@
 	&.image_left {
 		.decorative-image {
 			float: left;
+			margin-right: 30px;
 		}
 	}
 
 	&.image_right {
 		.decorative-image {
 			float: right;
+			margin-left: 30px;
 		}
 	}
 

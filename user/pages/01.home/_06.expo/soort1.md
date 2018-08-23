@@ -1,7 +1,7 @@
 ---
 title: Expo
 menu: Expo
-bgcolor: '#5C7286'
+bgcolor: '#b3c6d6'
 layout_classes: image_right
 ---
 

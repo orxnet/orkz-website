@@ -793,6 +793,70 @@ ul.pagination {
 #body > script:first-child + .grav-lightslider {
   margin-top: -3rem; }
 
+div.uitklap {
+  color: rgba(48, 69, 92, 0.8);
+  font-size: 17px;
+  line-height: 26px;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+  max-height: 800px;
+  opacity: 1;
+  transform: translate(0, 0);
+  margin-top: 14px;
+  z-index: 2; }
+  div.uitklap ul {
+    list-style: none;
+    perspective: 900;
+    padding: 0;
+    margin: 0; }
+    div.uitklap ul li {
+      position: relative;
+      padding: 0;
+      margin: 0;
+      padding-bottom: 4px;
+      padding-top: 18px;
+      border-top: 1px dotted #dce7eb; }
+      div.uitklap ul li i {
+        position: absolute;
+        transform: translate(-6px, 0);
+        margin-top: 16px;
+        right: 0; }
+      div.uitklap ul li i:before, div.uitklap ul li i:after {
+        content: "";
+        position: absolute;
+        background-color: #ff6873;
+        width: 3px;
+        height: 9px; }
+      div.uitklap ul li i:before {
+        transform: translate(-2px, 0) rotate(45deg); }
+      div.uitklap ul li i:after {
+        transform: translate(2px, 0) rotate(-45deg); }
+      div.uitklap ul li input[type=checkbox] {
+        position: absolute;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        opacity: 0; }
+      div.uitklap ul li input[type=checkbox]:checked ~ div.uitklap {
+        margin-top: 0;
+        max-height: 0;
+        opacity: 0;
+        transform: translate(0, 50%); }
+      div.uitklap ul li input[type=checkbox]:checked ~ i:before {
+        transform: translate(2px, 0) rotate(45deg); }
+      div.uitklap ul li input[type=checkbox]:checked ~ i:after {
+        transform: translate(-2px, 0) rotate(-45deg); }
+    div.uitklap ul li:nth-of-type(1) {
+      animation-delay: 0.5s; }
+    div.uitklap ul li:nth-of-type(2) {
+      animation-delay: 0.75s; }
+    div.uitklap ul li:nth-of-type(3) {
+      animation-delay: 1s; }
+    div.uitklap ul li:last-of-type {
+      padding-bottom: 0; }
+
 /* leeg */
 .modular .features {
   padding: 6rem 0;
@@ -910,9 +974,11 @@ ul.pagination {
     position: relative;
     overflow: hidden; }
   .rkzpage.image_left .decorative-image {
-    float: left; }
+    float: left;
+    margin-right: 30px; }
   .rkzpage.image_right .decorative-image {
-    float: right; }
+    float: right;
+    margin-left: 30px; }
   .rkzpage.image_right_bottom .decorative-image {
     display: inline-block;
     position: relative;

@@ -1,8 +1,8 @@
 ---
 title: Theater
 menu: Theater
-bgcolor: '#FDDE76'
-layout_classes: image_right
+bgcolor: '#F93488'
+layout_classes: image_left
 ---
 
 ![](icon_theater.png){.decorative-image}

@@ -2,16 +2,16 @@
 /**
  * @package    Grav.Console
  *
- * @copyright  Copyright (C) 2014 - 2017 RocketTheme, LLC. All rights reserved.
+ * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
 namespace Grav\Console\Cli;
 
 use Grav\Console\ConsoleCommand;
+use RocketTheme\Toolbox\File\YamlFile;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Yaml\Yaml;
 
 class InstallCommand extends ConsoleCommand
 {
@@ -71,9 +71,9 @@ class InstallCommand extends ConsoleCommand
 
         // Look for dependencies file in ROOT and USER dir
         if (file_exists($this->user_path . $dependencies_file)) {
-            $this->config = Yaml::parse(file_get_contents($this->user_path . $dependencies_file));
+            $file = YamlFile::instance($this->user_path . $dependencies_file);
         } elseif (file_exists($this->destination . $dependencies_file)) {
-            $this->config = Yaml::parse(file_get_contents($this->destination . $dependencies_file));
+            $file = YamlFile::instance($this->destination . $dependencies_file);
         } else {
             $this->output->writeln('<red>ERROR</red> Missing .dependencies file in <cyan>user/</cyan> folder');
             if ($this->input->getArgument('destination')) {
@@ -84,6 +84,9 @@ class InstallCommand extends ConsoleCommand
             
             return;
         }
+
+        $this->config = $file->content();
+        $file->free();
 
         // If yaml config, process
         if ($this->config) {
@@ -117,7 +120,7 @@ class InstallCommand extends ConsoleCommand
             $this->destination = rtrim($this->destination, DS);
             $path = $this->destination . DS . $data['path'];
             if (!file_exists($path)) {
-                exec('cd "' . $this->destination . '" && git clone -b ' . $data['branch'] . ' ' . $data['url'] . ' ' . $data['path'], $output, $return);
+                exec('cd "' . $this->destination . '" && git clone -b ' . $data['branch'] . ' --depth 1 ' . $data['url'] . ' ' . $data['path'], $output, $return);
 
                 if (!$return) {
                     $this->output->writeln('<green>SUCCESS</green> cloned <magenta>' . $data['url'] . '</magenta> -> <cyan>' . $path . '</cyan>');
@@ -153,20 +156,29 @@ class InstallCommand extends ConsoleCommand
 
         exec('cd ' . $this->destination);
         foreach ($this->config['links'] as $repo => $data) {
-            $from = $this->local_config[$data['scm'] . '_repos'] . $data['src'];
+            $repos = (array) $this->local_config[$data['scm'] . '_repos'];
+            $from = false;
             $to = $this->destination . $data['path'];
 
-            if (file_exists($from)) {
-                if (!file_exists($to)) {
-                    symlink($from, $to);
-                    $this->output->writeln('<green>SUCCESS</green> symlinked <magenta>' . $data['src'] . '</magenta> -> <cyan>' . $data['path'] . '</cyan>');
-                    $this->output->writeln('');
-                } else {
-                    $this->output->writeln('<red>destination: ' . $to . ' already exists, skipping...</red>');
-                    $this->output->writeln('');
+            foreach ($repos as $repo) {
+                $path = $repo . $data['src'];
+                if (file_exists($path)) {
+                    $from = $path;
+                    continue;
                 }
-            } else {
+            }
+
+            if (!$from) {
                 $this->output->writeln('<red>source: ' . $from . ' does not exists, skipping...</red>');
+                $this->output->writeln('');
+            }
+
+            if (!file_exists($to)) {
+                symlink($from, $to);
+                $this->output->writeln('<green>SUCCESS</green> symlinked <magenta>' . $data['src'] . '</magenta> -> <cyan>' . $data['path'] . '</cyan>');
+                $this->output->writeln('');
+            } else {
+                $this->output->writeln('<red>destination: ' . $to . ' already exists, skipping...</red>');
                 $this->output->writeln('');
             }
 

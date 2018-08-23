@@ -1,7 +1,8 @@
 ---
-title: Het Oude RKZ
+title: 'Het Oude RKZ'
+media_order: icon_wonen.png
+menu: 'Oude RKZ'
 bgcolor: '#BF7F6F'
-menu: Oude RKZ
 layout_classes: image_left
 ---
 

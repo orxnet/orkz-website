@@ -5,7 +5,7 @@ bgcolor: '#000000'
 layout_classes: image_right inverse-green
 ---
 
-![](icon_eethuisje.png){.decorative-image}
+![](icon_netwerk_smaller.jpg){.decorative-image}
 
 Het netwerk: ORXnet
 -------------------

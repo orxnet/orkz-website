@@ -1,8 +1,8 @@
 ---
 title: Bar
 menu: Bar
-bgcolor: '#000'
-layout_classes: image_right inverse
+bgcolor: '#EEB92D'
+layout_classes: image_right
 ---
 
 ![](icon_bar.png){.decorative-image}

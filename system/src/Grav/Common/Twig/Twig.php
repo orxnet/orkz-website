@@ -2,7 +2,7 @@
 /**
  * @package    Grav.Common.Twig
  *
- * @copyright  Copyright (C) 2014 - 2017 RocketTheme, LLC. All rights reserved.
+ * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
@@ -97,6 +97,9 @@ class Twig
 
             $this->grav->fireEvent('onTwigTemplatePaths');
 
+            // Add Grav core templates location
+            $this->twig_paths = array_merge($this->twig_paths, $locator->findResources('system://templates'));
+
             $this->loader = new \Twig_Loader_Filesystem($this->twig_paths);
 
             $this->grav->fireEvent('onTwigLoader');
@@ -110,7 +113,10 @@ class Twig
                 $params['cache'] = new \Twig_Cache_Filesystem($cachePath, \Twig_Cache_Filesystem::FORCE_BYTECODE_INVALIDATION);
             }
 
-            if (!empty($this->autoescape)) {
+            if (!$config->get('system.strict_mode.twig_compat', true)) {
+                // Force autoescape on for all files if in strict mode.
+                $params['autoescape'] = true;
+            } elseif (!empty($this->autoescape)) {
                 $params['autoescape'] = $this->autoescape;
             }
 
@@ -235,7 +241,9 @@ class Twig
             // Process Modular Twig
             if ($item->modularTwig()) {
                 $twig_vars['content'] = $content;
-                $template = $item->template() . TEMPLATE_EXT;
+                $extension = $item->templateFormat();
+                $extension = $extension ? ".{$extension}.twig" : TEMPLATE_EXT;
+                $template = $item->template() . $extension;
                 $output = $content = $local_twig->render($template, $twig_vars);
             }
 

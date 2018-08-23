@@ -7,7 +7,7 @@ layout_classes: image_right
 
 ![](IntroIcoontje.png){.decorative-image}
 
-Inschrijven in het ORKZ: de Intro
+Inschrijven in het ORKZ:<br/>De Intro
 ---------------------------------
 
 Wil je in het ORKZ wonen, schrijf je dan in bij de Intro. Antwoorden op je vragen omtrent de inschrijfprocedure lees je hieronder. Heb je een uitzonderlijke vraag, bel dan met de Intro. Ons telefoonnummer is 050-5267250. We zijn bereikbaar op donderdagmiddag tussen 14.00 uur en 18.00 uur. Je kunt ook je vraag via het contactformulier stellen. 
