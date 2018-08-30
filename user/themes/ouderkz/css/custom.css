@@ -46,7 +46,7 @@
 	text-align: center; 
 	color: white;
   cursor: pointer;
-  z-index: 10000;
+  z-index: 5000;
 }
 
 .overlay-button:hover {
