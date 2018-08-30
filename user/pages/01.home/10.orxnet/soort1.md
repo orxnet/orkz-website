@@ -2,7 +2,7 @@
 title: ORXnet
 menu: Netwerk
 bgcolor: '#000000'
-layout_classes: image_right inverse-green
+layout_classes: 'image_right inverse-green'
 ---
 
 ![](icon_netwerk_smaller.jpg){.decorative-image}

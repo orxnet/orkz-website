@@ -1,5 +1,5 @@
 ---
-title: Wonen in het Oude RKZ
+title: 'Wonen in het Oude RKZ'
 bgcolor: '#C1A62F'
 menu: Wonen
 layout_classes: image_left
