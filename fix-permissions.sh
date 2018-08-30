@@ -10,6 +10,7 @@ find ./user/accounts | xargs chmod g+w
 find ./cache | xargs chmod og+w
 find ./tmp | xargs chmod g+w
 find ./user/data | xargs chmod g+w
+find ./user/pages | xargs chmod g+w
 find ./assets | xargs chmod g+w
 find ./backup | xargs chmod g+w
 find ./images | xargs chmod g+w
