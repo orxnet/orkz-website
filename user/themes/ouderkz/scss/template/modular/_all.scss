@@ -29,12 +29,19 @@
 
 	.rkzpage-inner {
 	    border-radius: 50px;
-	    padding: 30px;
+	    padding: 10px 30px 30px 30px;
 	    margin: 20px auto;
 	    width: 90%;
 	    position: relative;
 	    overflow: hidden;
 	}
+
+	.decorative-image {
+	    @include breakpoint(mobile-only) {
+	        margin: auto !important;
+	        width: 100%;
+	    }
+    }
 
 	&.image_left {
 		.decorative-image {

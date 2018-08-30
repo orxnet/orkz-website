@@ -968,11 +968,15 @@ div.uitklap {
     text-decoration: underline; }
   .rkzpage .rkzpage-inner {
     border-radius: 50px;
-    padding: 30px;
+    padding: 10px 30px 30px 30px;
     margin: 20px auto;
     width: 90%;
     position: relative;
     overflow: hidden; }
+  @media only all and (max-width: 47.938em) {
+    .rkzpage .decorative-image {
+      margin: auto !important;
+      width: 100%; } }
   .rkzpage.image_left .decorative-image {
     float: left;
     margin-right: 30px; }
