@@ -84,7 +84,7 @@
     </div>
     <div class="sb-slidebar sb-left sb-width-thin">
         <div id="panel">
-        {% include 'partials/navigation.html.twig' %}
+				{{ block('header_navigation') }}
         </div>
     </div>
     {% block bottom %}
