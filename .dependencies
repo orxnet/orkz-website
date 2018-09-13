@@ -11,10 +11,15 @@ git:
         url: https://github.com/getgrav/grav-plugin-markdown-notices
         path: user/plugins/markdown-notices
         branch: master
-    antimatter:
-        url: https://github.com/getgrav/grav-theme-antimatter
-        path: user/themes/antimatter
+    shortcode-core:
+        url: https://github.com/getgrav/grav-plugin-shortcode-core
+        path: user/plugins/shortcode-core
         branch: master
+    langswitcher:
+        url: https://github.com/getgrav/grav-plugin-langswitcher
+        path: user/plugins/langswitcher
+        branch: master
+
 links:
     problems:
         src: grav-plugin-problems
@@ -28,7 +33,12 @@ links:
         src: grav-plugin-markdown-notices
         path: user/plugins/markdown-notices
         scm: github
-    antimatter:
-        src: grav-theme-antimatter
-        path: user/themes/antimatter
+    shortcode-core:
+        src: grav-plugin-shortcode-core
+        path: user/plugins/shortcode-core
         scm: github
+    langswitcher:
+        src: grav-plugin-langswitcher
+        path: user/plugins/langswitcher
+        scm: github
+
