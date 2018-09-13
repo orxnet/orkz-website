@@ -1,7 +1,7 @@
 ---
-title: 'Wonen in het Oude RKZ'
+title: 'Living in the ORKZ'
 bgcolor: '#C1A62F'
-menu: Wonen
+menu: Living in the ORKZ
 layout_classes: image_left
 ---
 
@@ -10,17 +10,17 @@ layout_classes: image_left
 Living in the ORKZ
 ------------------
 
-#### Zelfwerkzaamheid
-Van iedere bewoner/ster wordt een actieve deelname verwacht. De afspraak is dat iedereen een dagdeel per week meewerkt. Deze bijdrage is belangrijk omdat we op die manier onze leefwijze in stand kunnen houden, terwijl de woonlasten laag blijven. Het ORKZ is niet bedoeld als studentencomplex voor goedkoop wonen. 
+#### "Zelfwerkzaamheid"
+Every resident is expected to be actively involved. Together, the residents agreed that everybody should work one half-day a week for the building/community. This contribution is important for maintaining our way of living, while also keeping the costs affordable. It should be noted that the ORKZ is not intended as cheap housing for students. 
 
-#### Woningcoöperatie De Koevoet 
-De bewoners zijn verenigd in Coöperatie de Koevoet. De coöperatie draagt de huur af aan woningbouwvereniging Nijestee en de bewoners betalen hun huur aan de coöperatie. Bij ondertekening van het huurcontract ben je automatisch lid van de coöperatie. 
+#### Woningcoöperatie De Koevoet (The Board)
+As residents of the ORKZ, we are officially organised as ‘Coöperatie de Koevoet’ (Cooperation the Crowbar). This cooperation pays rent to the (much larger) housing association Nijestee, and the residents pay their rent to the cooperation. When you sign a lease contract, you automatically become a member of the cooperation. 
 
-#### Bewonersvergadering
-De Bewonersvergadering is het belangrijkste onderdeel van het Oude RKZ. Bewoners stemmen over voorstellen die door het bestuur of door bewoners worden ingebracht. Vervolgens worden deze besluiten uitgevoerd door het bestuur of de verschillende commissies.  Ook kiest de  bewonersvergadering eens per jaar het nieuwe bestuur van de Koevoet. Het bestuur is belast met de dagelijkse leiding en het onderhouden van interne en externe betrekkingen.
+#### Resident's Meeting 
+The residents’ meeting, or the ‘Bewonersvergadering,’ is the most important part of living in the ORKZ. Residents vote on proposals made by the board or brought up by residents. Decisions made in the residents’ meeting are carried out by the board or one of the committees. Once a year the residents’ meeting chooses a new board, who are responsible for daily management and internal and external relations.
 
-#### Technische dienst en Onderhoud
-De Technische Dienst en Onderhoud gaan over het fysieke onderhoud van het pand. De Technische Dienst doet dit voor een deel onder de grond: ze onderhouden en regelen de CV-ketel, de andere technische installaties en de leidingen. Onderhoud is meer bovengronds aan het werk: zij gaan over verbouwingen, klein onderhoud aan de algemene delen van het pand en ze regelen de grotere onderhoudsklussen, al dan niet uitbesteed aan bedrijven. Klein onderhoud aan kamers wordt in de regel door bewoners zelf uitgevoerd.
+#### ‘Technical Service’ and ‘Maintenance’
+The physical maintenance of the building is carried out by two separate committees: the ‘Technische Dienst’  and ‘Onderhoud’ (‘Technical Service’ and ‘Maintenance’ or TD and OH). The Technische Dienst does this for the most part below ground: they maintain and adjust the central heating and the service pipes. Maintenance does their work mainly above ground: they are responsible for big and small renovation projects and maintenance of the communal spaces. Bigger jobs are outsourced. Residents usually do minor maintenance of their own rooms themselves.
 
 #### Koevoeter Courant
-Algemene communicatie verloopt via de Koevoeter Courant, het officiële orgaan van de Koevoet. Hierin staan mededelingen van het bestuur en de verschillende commissies, de agenda en notulen van de Bewonersvergadering, opinie, aankondigingen van leuke activiteiten zoals feesten, bandjes en theater en allerlei andere zaken die te maken hebben met het Oude RKZ. Voor uitgebreidere zaken komt er zo nu en dan een RKZ-krant uit.
+The Koevoeter Courant (Crowbar Courier) is the main channel of communication of the cooperation. It contains messages from the board and committees, the agenda and notes from the residents’ meeting, opinions, announcements of fun activities like parties, band- or theatre performances, and any other things related to the ORKZ. Occasionally, when there are bigger issues to discuss, we publish an ‘Orkz Magazine.’
