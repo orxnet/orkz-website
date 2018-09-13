@@ -1,0 +1,8 @@
+enabled: true
+active: true
+active_admin: true
+parser: regex
+custom_shortcodes:
+fontawesome:
+  load: true
+  url: '/user/themes/ouderkz/css/font-awesome.min.css'
