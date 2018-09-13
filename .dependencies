@@ -19,6 +19,10 @@ git:
         url: https://github.com/getgrav/grav-plugin-langswitcher
         path: user/plugins/langswitcher
         branch: master
+    admin:
+        url: https://github.com/getgrav/grav-plugin-admin
+        path: user/plugins/admin
+        branch: master
 
 links:
     problems:
@@ -40,5 +44,9 @@ links:
     langswitcher:
         src: grav-plugin-langswitcher
         path: user/plugins/langswitcher
+        scm: github
+    admin:
+        src: grav-plugin-admin
+        path: user/plugins/admin
         scm: github
 

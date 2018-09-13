@@ -11,29 +11,30 @@ This website is made with [Grav](https://getgrav.org/). Grav is written in PHP a
 ### Windows
 
 1. Install WAMP or XAMP
-2. Find the Web folder (eg. `c:\wamp64\www`)
-2. Start WAMP and go to `http://localhost` to see if it's working
-2. Install Git for Windows
-3. Start 'Git GUI' and clone this website into the Web folder
-4. Go to `http://localhost/orkz-website`. You should see 'Run bin/grav install'
-5. Start Git Bash
-6. Go to `c:\wamp64\www\orkz-website`
-7. Run `bin/grav install` or `c:\wamp64\bin\php\php5.x\php grav install`
-8. Run `bin/grav self-upgrade`
-8. Run `bin/gpm install shortcode-core`
-8. Run `bin/gpm install admin`
+1. Find the Web folder (eg. `c:\wamp64\www`)
+1. Start WAMP and go to `http://localhost` to see if it's working
+1. Install Git for Windows
+1. Start Git Bash
+1. `cd /c/wamp64/www`
+1. `git clone https://github.com/orxnet/orkz-website`
+1. Go to `http://localhost/orkz-website`. You should see 'Run bin/grav install'
+1. Go back to Git Bash
+1. `cd /c/wamp64/www/orkz-website`
+1. Run `/c/wamp64/bin/php/php5.6.35/php bin/grav install`
+1. Run `/c/wamp64/bin/php/php5.6.35/php bin/grav self-upgrade`
 
 ### Linux
 
 1. Install apache: `sudo apt install apache2`
-2. Find the Web folder (eg. `/var/www/html`)
-2. Go to `http://localhost` to see if it's working
-2. Install Git: `sudo apt install git`
-3. `cd /var/www/html` and `git clone` this website
-4. Go to `http://localhost/orkz-website`. You should see 'Run bin/grav install'
-6. `cd /var/www/html/orkz-website`
-7. Run `bin/grav install`
-8. Run `bin/grav self-upgrade`
+1. Find the Web folder (eg. `/var/www/html`)
+1. Go to `http://localhost` to see if it's working
+1. Install Git: `sudo apt install git`
+1. `cd /var/www/html`
+1. `git clone https://github.com/orxnet/orkz-website`
+1. Go to `http://localhost/orkz-website`. You should see 'Run bin/grav install'
+1. `cd /var/www/html/orkz-website`
+1. Run `bin/grav install`
+1. Run `bin/grav self-upgrade`
 8. Run `bin/gpm install shortcode-core`
 8. Run `bin/gpm install admin`
 
