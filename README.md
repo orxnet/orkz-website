@@ -35,8 +35,28 @@ This website is made with [Grav](https://getgrav.org/). Grav is written in PHP a
 1. `cd /var/www/html/orkz-website`
 1. Run `bin/grav install`
 1. Run `bin/grav self-upgrade`
-8. Run `bin/gpm install shortcode-core`
-8. Run `bin/gpm install admin`
+1. Run `bin/gpm install shortcode-core`
+1. Run `bin/gpm install admin`
+
+### Pushing your work
+
+1. `git status`: check which files you changed
+1. `git diff`: check what you actually changed
+1. `git stash`: undo what you changed
+1. `git pull`: pull latest work from online
+1. `git stash pop`: reapply your changes on latest work
+1. `git commit`: commit your work (think of a nice commit message)
+1. `git push` or `git push origin master`: push your work
+
+### Pulling new work
+
+1. `git status`: check if you dont have any stray changes
+1. `git stash`: undo your stray changes if they are there
+1. `git log`: check which is the most recent commit you have locally
+1. Compare with [latest commits online](https://github.com/orxnet/orkz-website/commits/master).
+1. If you are behind: `git pull` or `git pull origin master`
+1. `git log`: check if successfully pulled
+1. `bin/gpm install`: install new plugins if the `.dependencies` file was updated
 
 ## Getting Started with Grav
 
