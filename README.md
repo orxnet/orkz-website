@@ -34,7 +34,7 @@ This website is made with [Grav](https://getgrav.org/). Grav is written in PHP a
 1. Go to `http://localhost/orkz-website`. You should see 'Run bin/grav install'
 1. `cd /var/www/html/orkz-website`
 1. Run `bin/grav install`
-1. Run `bin/grav self-upgrade`
+1. Run `bin/gpm self-upgrade`
 1. Run `bin/gpm install shortcode-core`
 1. Run `bin/gpm install admin`
 
