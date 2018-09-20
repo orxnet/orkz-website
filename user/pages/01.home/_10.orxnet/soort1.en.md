@@ -1,6 +1,6 @@
 ---
 title: The Network: ORXnet
-menu: The Network
+menu: Network
 bgcolor: '#000000'
 layout_classes: 'image_right inverse-green'
 ---

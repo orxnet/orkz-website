@@ -1,7 +1,7 @@
 ---
 title: 'Living in the ORKZ'
 bgcolor: '#C1A62F'
-menu: Living in the ORKZ
+menu: Living @ ORKZ
 layout_classes: image_left
 ---
 

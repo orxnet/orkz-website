@@ -1,7 +1,7 @@
 ---
 title: 'The ORKZ'
 media_order: icon_wonen.png
-menu: 'About ORKZ'
+menu: 'About'
 bgcolor: '#BF7F6F'
 layout_classes: image_left
 ---
