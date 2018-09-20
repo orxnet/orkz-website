@@ -1,21 +1,9 @@
 * { margin: 0; padding: 0; }
 
-#header.scrolled {
-  position: fixed !important;
-  top: 0 !important;
-}
-
-/*.backgroundimage {
-  display: block;
-  height: 767px;
-  max-width: none !important;
-  margin: auto;
-}
-*/
-
 .backstretch {
   position: absolute !important;
 }
+
 #welcome {
   height: 100vh;
   display: block;
@@ -31,7 +19,6 @@
   left: 50%;
   margin-left: -200px;
   top: 5%;
-  /*padding: 20px;*/
   text-align: center; 
   color: white;
 }

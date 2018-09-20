@@ -24,9 +24,11 @@
 
     {% if show_language %}
         {% if language == 'nl' %}
-               <li><a href="{{ lang_url ~ uri.params }}" class="external{{ active_class }}"> <img src="{{ url('theme://images/nl.png') }}"  /></a></li> {% endif %}
+            <li><a href="{{ lang_url ~ uri.params }}" class="external{{ active_class }}"> <img src="{{ url('theme://images/nl.png') }}" /></a></li>
+        {% endif %}
         {% if language == 'en' %}
-               <li><a href="{{ lang_url ~ uri.params }}" class="external{{ active_class }}"> <img src="{{ url('theme://images/eng.png') }}"  /></a></li> {% endif %}
+            <li><a href="{{ lang_url ~ uri.params }}" class="external{{ active_class }}"> <img src="{{ url('theme://images/eng.png') }}" /></a></li>
+        {% endif %}
     {% endif %}
 
 {% endfor %}

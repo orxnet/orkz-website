@@ -57,16 +57,16 @@ b, strong, label, th {
   transition: all 0.5s ease; }
 
 .padding-horiz, .fullwidth #header, .fullwidth #breadcrumbs, .fullwidth .blog-header, .fullwidth .blog-content-item, .fullwidth .content-wrapper, .fullwidth ul.pagination, .fullwidth #body > .modular-row, #body, #header, #footer {
-  padding-left: 7rem;
-  padding-right: 7rem; }
+  padding-left: 4.5rem;
+  padding-right: 4.5rem; }
   @media only all and (max-width: 59.938em) {
     .padding-horiz, .fullwidth #header, .fullwidth #breadcrumbs, .fullwidth .blog-header, .fullwidth .blog-content-item, .fullwidth .content-wrapper, .fullwidth ul.pagination, .fullwidth #body > .modular-row, #body, #header, #footer {
-      padding-left: 4rem;
-      padding-right: 4rem; } }
+      padding-left: 1.5rem;
+      padding-right: 1.5rem; } }
   @media only all and (max-width: 47.938em) {
     .padding-horiz, .fullwidth #header, .fullwidth #breadcrumbs, .fullwidth .blog-header, .fullwidth .blog-content-item, .fullwidth .content-wrapper, .fullwidth ul.pagination, .fullwidth #body > .modular-row, #body, #header, #footer {
-      padding-left: 1rem;
-      padding-right: 1rem; } }
+      padding-left: -1.5rem;
+      padding-right: -1.5rem; } }
 
 .padding-vert {
   padding-top: 3rem;
@@ -76,6 +76,8 @@ b, strong, label, th {
   height: 5rem; }
 
 #header {
+  padding-left: 5% !important;
+  padding-right: 5% !important;
   position: fixed;
   z-index: 10;
   width: 100%;
@@ -83,9 +85,11 @@ b, strong, label, th {
   background-color: rgba(255, 255, 255, 0.9);
   box-shadow: 0 0.05rem 1rem rgba(0, 0, 0, 0.15); }
   #header.scrolled {
-    height: 5rem;
+    height: 3.2rem;
     background-color: rgba(255, 255, 255, 0.9) !important;
-    box-shadow: 0 0.05rem 1rem rgba(0, 0, 0, 0.15) !important; }
+    box-shadow: 0 0.05rem 1rem rgba(0, 0, 0, 0.15) !important;
+    position: fixed !important;
+    top: 0 !important; }
     #header.scrolled #logo h3 {
       color: #000 !important;
       font-size: 1.6rem !important; }
@@ -112,6 +116,8 @@ b, strong, label, th {
         color: #000; }
   #header #navbar {
     font-size: 0.9rem;
+    padding-left: 20px;
+    padding-right: 20px;
     /* Child Indicator */ }
     #header #navbar .has-children > a > span {
       display: inline-block;
@@ -141,7 +147,7 @@ b, strong, label, th {
       list-style: none; }
       #header #navbar ul.navigation {
         display: inline-block;
-        float: right;
+        float: left;
         margin-top: 1.4rem; }
         #header #navbar ul.navigation li {
           float: left;
@@ -241,8 +247,8 @@ b, strong, label, th {
   padding-left: 0;
   padding-right: 0; }
   .header-image.fullwidth #body > .listing-row {
-    padding-left: 7rem;
-    padding-right: 7rem; }
+    padding-left: 4.5rem;
+    padding-right: 4.5rem; }
 .header-image .listing-row:last-child {
   margin-bottom: 2rem; }
 .header-image #body .flush-top {

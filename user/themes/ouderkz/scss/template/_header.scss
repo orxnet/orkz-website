@@ -8,6 +8,8 @@ $dropdown-color: #f6f6f6;
 #header {
 	@extend .default-animation;
 	@extend .padding-horiz;
+	padding-left: 5% !important;
+	padding-right: 5% !important;
 	position: fixed;
 	z-index: 10;
 	width: 100%;
@@ -17,9 +19,11 @@ $dropdown-color: #f6f6f6;
 
 	// scroll based changes
 	&.scrolled {
-		height: $header-height;
+		height: $header-height - 1.8rem;
 		background-color: rgba(255,255,255,0.90) !important;
 		box-shadow: 0 0.05rem 1rem rgba(0,0,0, 0.15) !important;
+	  	position: fixed !important;
+	  	top: 0 !important;
 
 		#logo h3 {
 			color: $core-text !important;
@@ -37,7 +41,6 @@ $dropdown-color: #f6f6f6;
 		#navbar a:before, #navbar a:after {
 			background-color: $core-accent !important;
 		}
-
 		.navigation {
 			margin-top: 0.5rem !important;
 		}
@@ -65,6 +68,8 @@ $dropdown-color: #f6f6f6;
 
 	#navbar {
 		font-size: $core-font-size - 0.1rem;
+		padding-left: $padding-horiz-inner;
+		padding-right: $padding-horiz-inner;
 
 		/* Child Indicator */
 		.has-children {
@@ -111,7 +116,7 @@ $dropdown-color: #f6f6f6;
 
 			&.navigation {
 				display: inline-block;
-				float: right;
+				float: left;
 				@extend .default-animation;
 
 				margin-top: 1.4rem;
