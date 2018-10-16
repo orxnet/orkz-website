@@ -1,15 +1,21 @@
 {% extends 'partials/base.html.twig' %}
 
 {% block initial %}
-	<div id="welcome">
-		<div class="overlay-center">
-			<a href="#showcase">
-				<span class="fa-stack test fa-lg">
-				    <i class="fa fa-circle-thin fa-stack-2x"></i>
-				    <i class="fa fa-arrow-down fa-stack-1x"></i>
-				</span>
-			</a>
-		</div>
-	</div>
+	<div id="contentpage" style="height: 150px !important;"></div>
 {% endblock %}
 
+{% block content %}
+	<div style="background-color: white !important; z-index: 1000;">
+		<div class="rkzpage">
+
+			<div class="rkzpage-inner" 
+				 style="background-color: grey;">
+				<div class="rkzpage-innerinner">
+					{{ page.content }}
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+{% endblock %}

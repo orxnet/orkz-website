@@ -51,13 +51,13 @@
         <header id="header">
             <div id="navbar">
                 {% block header_extra %}{% endblock %}
-                {% if config.plugins.langswitcher.enabled %}
-                {% include 'partials/langswitcher.html.twig' %}
-                {% endif %}
                 {% block header_navigation %}
                 {% include 'partials/navigation.html.twig' %}
                 {% endblock %}
                 <span class="panel-activation sb-toggle-left navbar-left menu-btn fa fa-bars"></span>
+                {% if config.plugins.langswitcher.enabled %}
+                {% include 'partials/langswitcher.html.twig' %}
+                {% endif %}
             </div>
         </header>
     </div>
@@ -78,7 +78,7 @@
             <div class="totop">
                 <span><a href="#" id="toTop"><i class="fa fa-arrow-up"></i></a></span>
             </div>
-            <p>&copy; <span id="curyear">2017</span> Oude RKZ / <a href="http://www.orxnet.org">ORXnet</a>. <a href="admin">login</a></p>
+            <p>&copy; <span id="curyear">2017</span> Oude RKZ / <a href="http://www.orxnet.org">ORXnet</a>. <a href="admin">login</a> <a href="https://github.com/orxnet/orkz-website">source</a></p>
         </footer>
         {% endblock %}
     </div>

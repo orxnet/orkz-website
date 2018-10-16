@@ -217,7 +217,7 @@ $dropdown-color: #f6f6f6;
 					}
 
 				}
-				@include breakpoint(desktop-only) {
+				@include breakpoint(large-desktop-only) {
 					display: none;
 				}
 			}	
@@ -230,7 +230,7 @@ $dropdown-color: #f6f6f6;
 			font-size: 1.8rem;
 			cursor: pointer;
 			float: right;
-			@include breakpoint(desktop-only) {
+			@include breakpoint(large-desktop-only) {
 				display: inline-block;
 			}
 		}
