@@ -6,12 +6,14 @@
     {% set header_image_file = page.header.header_image_file %}
 
     <div class="list-blog-header">
+        {% if page.header.date %}
         <span class="list-blog-date">
             <time class="dt-published" datetime="{{ page.date|date("c") }}">
                 <span>{{ page.date|date("d") }}</span>
                 <em>{{ page.date|date("M") }}</em>
             </time>
         </span>
+        {% endif %}
         {% if page.header.link %}
             <h4 class="p-name">
                 {% if page.header.continue_link is not sameas(false) %}
@@ -72,7 +74,7 @@
         {% set show_prev_next = true %}
     {% endif %}
 
-    {% if show_prev_next %}
+    {# if show_prev_next %}
 
         <p class="prev-next">
             {% if not page.isFirst %}
@@ -83,7 +85,7 @@
                 <a class="button" href="{{ page.prevSibling.url }}">{{ 'BLOG.ITEM.PREV_POST'|t }} <i class="fa fa-chevron-right"></i></a>
             {% endif %}
         </p>
-    {% endif %}
+    {% endif #}
 
     </div>
 </div>

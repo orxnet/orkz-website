@@ -1,11 +1,10 @@
 ---
 title: Expo
+media_order: icon_expo.png
 menu: Expo
 bgcolor: '#b3c6d6'
 layout_classes: image_right
 ---
-
-![](icon_expo.png){.decorative-image}
 
 Expo
 ----

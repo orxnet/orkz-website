@@ -47,6 +47,14 @@
             <button class="reset">Reset</button>
         </div>
     </div>
+    <script>
+    $(function () {
+        $(document).ready(function() {
+            // Stretched welcome image
+            $.backstretch("{{ url('theme://images/background.png') }}");
+        });
+    });
+    </script>
 {% endblock %}
 
 {% block header_navigation %}

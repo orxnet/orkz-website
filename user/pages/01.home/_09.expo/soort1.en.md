@@ -5,8 +5,6 @@ bgcolor: '#b3c6d6'
 layout_classes: image_right
 ---
 
-![](icon_expo.png){.decorative-image}
-
 Expo
 ----
 

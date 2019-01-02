@@ -5,8 +5,6 @@ menu: Wonen
 layout_classes: image_left
 ---
 
-![](icon_wonen.png){.decorative-image}
-
 Wonen in het Oude RKZ
 ---------------------
 

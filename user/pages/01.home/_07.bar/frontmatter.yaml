@@ -1,0 +1,7 @@
+content:
+    items:
+        '@self.descendants'
+    order:
+        by: date
+        dir: desc
+

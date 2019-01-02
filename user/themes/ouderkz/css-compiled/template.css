@@ -810,6 +810,12 @@ ul.pagination {
   height: 150px;
   display: block; }
 
+.background-single {
+  height: 150px !important;
+  background: url(../images/background-cut.png);
+  background-size: cover;
+  background-position-y: bottom; }
+
 .zoomContainer {
   z-index: 100000; }
 

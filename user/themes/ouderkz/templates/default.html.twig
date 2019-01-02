@@ -1,15 +1,14 @@
 {% extends 'partials/base.html.twig' %}
 
 {% block initial %}
-	<div id="contentpage" style="height: 150px !important;"></div>
+	<div id="contentpage" class="background-single"></div>
 {% endblock %}
 
 {% block content %}
 	<div style="background-color: white !important; z-index: 1000;">
 		<div class="rkzpage">
 
-			<div class="rkzpage-inner" 
-				 style="background-color: grey;">
+			<div class="rkzpage-inner" style="background-color: lightgrey;">
 				<div class="rkzpage-innerinner">
 					{{ page.content }}
 				</div>

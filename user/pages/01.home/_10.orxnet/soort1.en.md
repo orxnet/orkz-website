@@ -5,8 +5,6 @@ bgcolor: '#000000'
 layout_classes: 'image_right inverse-green'
 ---
 
-![](icon_netwerk_smaller.jpg){.decorative-image}
-
 The Network: ORXnet
 -------------------
 

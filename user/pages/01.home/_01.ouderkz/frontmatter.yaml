@@ -1,0 +1,7 @@
+content:
+    items:
+        '@root.descendants'
+    order:
+        by: date
+        dir: desc
+

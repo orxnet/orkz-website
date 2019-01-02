@@ -1,8 +1,27 @@
 <div class="rkzpage {{ page.header.layout_classes }}">
 
-	<div class="rkzpage-inner" 
+ <div class="rkzpage-inner" 
 		 style="background-color: {{ page.header.bgcolor }};">
 		<div class="rkzpage-innerinner">
+      {% for image in page.media.images %}
+        <img class="decorative-image" src="{{ image.url }}">
+      {% endfor %}
+      {% if page.collection %}
+      <div style="float: right; margin-top: 20px; background:rgba(255,255,255,0.5);">
+        <ul style="list-style-type: none; margin: 0; padding: 0;">
+        {% for p in page.collection %}
+          {% if p.header.date %}
+            <li style="margin-left: 10px; margin-right: 10px;">
+              <strong>{{ p.header.date|date('d-M Y')}}</strong>
+              <a href="{{ p.url }}">
+                {{ p.title }}
+              </a>
+            </li>
+          {% endif %}
+        {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
 			{{ page.content }}
 		</div>
 	</div>

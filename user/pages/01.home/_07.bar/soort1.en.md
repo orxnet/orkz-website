@@ -5,8 +5,6 @@ bgcolor: '#EEB92D'
 layout_classes: image_right
 ---
 
-![](icon_bar.png){.decorative-image}
-
 The ORKZbar
 ----------
 *Check out [www.orkzbar.nl [fa=external-link /]](http://www.orkzbar.nl?target=_blank)*

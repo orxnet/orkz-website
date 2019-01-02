@@ -5,8 +5,6 @@ menu: Inschrijven
 layout_classes: image_right
 ---
 
-![](IntroIcoontje.png){.decorative-image}
-
 Inschrijven in het ORKZ:<br/>De Intro
 ---------------------------------
 

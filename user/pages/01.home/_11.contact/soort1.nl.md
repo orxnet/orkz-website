@@ -5,8 +5,6 @@ bgcolor: '#75A4F6'
 layout_classes: image_right
 ---
 
-![](icon_contact.png){.decorative-image}
-
 Contact
 -------
 

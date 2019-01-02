@@ -5,8 +5,6 @@ menu: Living @ ORKZ
 layout_classes: image_left
 ---
 
-![](icon_wonen.png){.decorative-image}
-
 Living in the ORKZ
 ------------------
 

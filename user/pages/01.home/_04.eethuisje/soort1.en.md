@@ -5,8 +5,6 @@ bgcolor: '#B36E5B'
 layout_classes: image_right_bottom
 ---
 
-![](icon_eethuisje.png){.decorative-image}
-
 Het Eethuisje (the restaurant/diner)
 ---------
 On Tuesdays, Thursdays, Fridays and Sundays you can join us for a delicious dinner. The not-for-profit restaurant is located in the day-café (dagcafé), which is located next to the main entrance on the Emmastraat. The food is always vegetarian; a meat or vegan option is often available too. Dinner is served at 18:30 (6:30pm). You can sign up after 15:30 at the restaurant or by phone. If you want to know what’s on the menu, follow our Facebook page. A three course meal costs approximately €6.

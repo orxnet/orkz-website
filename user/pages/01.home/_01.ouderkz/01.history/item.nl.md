@@ -1,7 +1,8 @@
 ---
-title: 'Historie'
+title: Historie
 menu: Historie
-onpage_menu: no
 slug: historie
+onpage_menu: 'no'
 ---
+
 Het ORKZ heeft een hele rijke historie.

@@ -5,7 +5,6 @@ bgcolor: '#E4B56D'
 layout_classes: image_right
 ---
 
-![](icon_dagcafe.png){.decorative-image}
 Dagcafé
 -------
 

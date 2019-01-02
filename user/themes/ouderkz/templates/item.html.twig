@@ -1,18 +1,39 @@
 {% embed 'partials/base.html.twig' %}
 
-	{% block content %}
-		{% if config.plugins.breadcrumbs.enabled %}
-			{% include 'partials/breadcrumbs.html.twig' %}
-		{% endif %}
-		
-		<div class="blog-content-item grid pure-g-r">
-			<div id="item" class="block pure-u-2-3 h-entry">
-			    {% include 'partials/blog_item.html.twig' with {'blog':page.parent, 'truncate':false} %}
-			</div>
-			<div id="sidebar" class="block size-1-3 pure-u-1-3">
-				{% include 'partials/sidebar.html.twig' with {'blog':page.parent}%}
-			</div>
-		</div>
-	{% endblock %}
+{% block initial %}
+  <div id="contentpage" class="background-single"></div>
+{% endblock %}
+
+{% block header_navigation %}
+  <ul class="navigation">
+    <li>
+        <a href="/">
+            <span>
+            <i class="fa fa-home"></i>
+            Home
+            </span>
+        </a>
+        <span>&gt;&gt;</span>
+    </li>
+    <li class="active">
+        <a href="{{ page.url }}">
+            {% if page.header.icon %}<i class="fa fa-{{ p.header.icon }}"></i>{% endif %}
+            {{ page.menu }}
+        </a>
+    </li>
+  </ul>
+{% endblock %}
+
+{% block content %}
+  {% if config.plugins.breadcrumbs.enabled %}
+    {% include 'partials/breadcrumbs.html.twig' %}
+  {% endif %}
+  
+  <div class="blog-content-item grid pure-g-r">
+    <div id="item" class="block pure-u-2-3 h-entry">
+        {% include 'partials/blog_item.html.twig' with {'blog':page.parent, 'truncate':false} %}
+    </div>
+  </div>
+{% endblock %}
 
 {% endembed %}

@@ -5,7 +5,6 @@ bgcolor: '#7FB1C1'
 layout_classes: image_right
 ---
 
-![](icon_bios.png){.decorative-image}
 Cinema (ORKZBios)
 -------
 
