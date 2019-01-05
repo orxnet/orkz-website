@@ -1,7 +1,9 @@
 content:
     items:
         '@self.descendants'
+    dateRange:
+        start: now
     order:
         by: date
-        dir: desc
+        dir: asc
 

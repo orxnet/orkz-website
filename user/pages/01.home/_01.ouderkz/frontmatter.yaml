@@ -1,7 +1,10 @@
 content:
     items:
         '@root.descendants'
+    dateRange:
+        start: now
     order:
         by: date
-        dir: desc
+        dir: asc
+    limit: 10
 
