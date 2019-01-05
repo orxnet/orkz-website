@@ -1,9 +1,16 @@
-content:
+events:
     items:
         '@self.descendants'
+    filter:
+        type: 'event'
     dateRange:
         start: now
     order:
         by: date
         dir: asc
+subpages:
+    items:
+        '@self.descendants'
+    filter:
+        type: 'item'
 
