@@ -102,6 +102,28 @@ class Twig
 
             $this->loader = new \Twig_Loader_Filesystem($this->twig_paths);
 
+            // Register all other prefixes as namespaces in twig
+            foreach ($locator->getPaths('theme') as $prefix => $_) {
+                if ($prefix === '') {
+                    continue;
+                }
+
+                $twig_paths = [];
+
+                // handle language templates if available
+                if ($language->enabled()) {
+                    $lang_templates = $locator->findResource('theme://'.$prefix.'templates/' . ($active_language ? $active_language : $language->getDefault()));
+                    if ($lang_templates) {
+                        $twig_paths[] = $lang_templates;
+                    }
+                }
+
+                $twig_paths = array_merge($twig_paths, $locator->findResources('theme://'.$prefix.'templates'));
+
+                $namespace = trim($prefix, '/');
+                $this->loader->setPaths($twig_paths, $namespace);
+            }
+
             $this->grav->fireEvent('onTwigLoader');
 
             $this->loaderArray = new \Twig_Loader_Array([]);
@@ -115,9 +137,13 @@ class Twig
 
             if (!$config->get('system.strict_mode.twig_compat', true)) {
                 // Force autoescape on for all files if in strict mode.
-                $params['autoescape'] = true;
+                $params['autoescape'] = 'html';
             } elseif (!empty($this->autoescape)) {
-                $params['autoescape'] = $this->autoescape;
+                $params['autoescape'] = $this->autoescape ? 'html' : false;
+            }
+
+            if (empty($params['autoescape'])) {
+                user_error('Grav 2.0 will have Twig auto-escaping forced on (can be emulated by turning off \'system.strict_mode.twig_compat\' setting in your configuration)', E_USER_DEPRECATED);
             }
 
             $this->twig = new TwigEnvironment($loader_chain, $params);
@@ -411,8 +437,14 @@ class Twig
      * Overrides the autoescape setting
      *
      * @param boolean $state
+     * @deprecated 1.5
      */
-    public function setAutoescape($state) {
+    public function setAutoescape($state)
+    {
+        if (!$state) {
+            user_error(__CLASS__ . '::' . __FUNCTION__ . '(false) is deprecated since Grav 1.5', E_USER_DEPRECATED);
+        }
+
         $this->autoescape = (bool) $state;
     }
 }
