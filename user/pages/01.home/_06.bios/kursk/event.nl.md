@@ -1,5 +1,6 @@
 ---
 title: 'Film: Kursk'
+published: true
 date: '26-01-2019 05:34'
 ---
 
