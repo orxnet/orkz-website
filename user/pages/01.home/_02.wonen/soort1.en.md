@@ -8,7 +8,7 @@ layout_classes: image_left
 Living in the ORKZ
 ------------------
 
-#### "Zelfwerkzaamheid"
+#### Involvement / participation
 Every resident is expected to be actively involved. Together, the residents agreed that everybody should work one half-day a week for the building/community. This contribution is important for maintaining our way of living, while also keeping the costs affordable. It should be noted that the ORKZ is not intended as cheap housing for students. 
 
 #### Woningcoöperatie De Koevoet (The Board)
