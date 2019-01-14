@@ -3,4 +3,5 @@ title: 'History'
 menu: History
 onpage_menu: no
 ---
-The ORKZ has a wonderful history.
+
+This page will soon be filled.
