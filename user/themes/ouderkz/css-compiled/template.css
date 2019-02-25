@@ -1031,6 +1031,13 @@ div.uitklap {
     div.uitklap ul li:last-of-type {
       padding-bottom: 0; }
 
+.list-blog-padding img.image_left {
+  float: left;
+  margin-right: 30px; }
+.list-blog-padding img.image_right {
+  float: right;
+  margin-left: 30px; }
+
 /* leeg */
 .modular .features {
   padding: 6rem 0;
