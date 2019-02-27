@@ -1,6 +1,6 @@
 ---
 title: Dagcafé (Day Café)
-menu: Day Café
+menu: Day Cafe
 bgcolor: '#E4B56D'
 layout_classes: image_right
 ---

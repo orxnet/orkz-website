@@ -1,6 +1,6 @@
 ---
 title: Dagcafé
-menu: Dagcafé
+menu: Dagcafe
 bgcolor: '#E4B56D'
 layout_classes: image_right
 ---

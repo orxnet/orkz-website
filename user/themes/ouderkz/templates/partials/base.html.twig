@@ -93,11 +93,14 @@
         $(function () {
             $(document).ready(function() {
                 // slidebars
-                $.slidebars({
+                myslidebars = new $.slidebars({
                     hideControlClasses: true,
                     scrollLock: true
                 });
-
+                $( ".closeleft" ).click(function() {
+                    myslidebars.slidebars.toggle('left');
+                    return true;
+                });
                 // current year for copyright notice
                 var curyear = new Date().getFullYear();
                 $('#curyear').html(curyear);
