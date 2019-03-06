@@ -1,16 +1,20 @@
 ---
-title: Theater
+title: 'ORKZ Theater de Kapel'
 menu: Theater
 bgcolor: '#F93488'
 layout_classes: image_left
 ---
 
-Theater de Kapel
+ORKZ Theater de Kapel
 ----------------
 
 *Zie ook [www.theaterdekapel.nl [fa=external-link /]](http://www.theaterdekapel.nl)*
 
-Theater de Kapel (TdK) is een theater voor en door artiesten. Wij proberen een podium te bieden waar de artiest geheel zijn eigen gang gaat. Wij hebben geen commercieel doel en werken uitsluitend met ervaren vrijwilligers. Je kunt op eigen risico spelen of een samenwerking aangaan met TdK, ach, wat kan er eigenlijk niet ! Dus, theatermakers, dichters, muzikanten, kleinkunstenaars, sla uw slag met TdK. Omdat wij vinden dat iedereen recht heeft op betaalbare kunst en cultuur. Wij willen graag het heft in eigen handen nemen. Voor zaalhuur, repetities, try-outs is de prijs in overleg. Geen bruiloften en partijen ! Geen harde muziek, geen drums, i.vm. geluidsoverlast. Zaterdag en Maandag na 20:30 kan er geen gebruik gemaakt worden van de Kapel. Neem met ons contact op over de voorwaarden.
+ORKZ Theater de Kapel is een volledig uitgeruste theaterzaal waar momenteel voornamelijk muziekvoorstellingen worden gegeven. Het Concert in de Kapel staat sinds een paar jaar garrant voor een intieme en prikkelende concerten in zeer diverse genres: van traditioneel tot experimenteel! Ook worden er jamsessies georganiseerd en is er elke laatste vrijdag van de maand  [Poëzie Met [fa=external-link /]](https://www.facebook.com/PoezieMet/)!
 
-**Contact:** [chris@orkz.net [fa=envelope/]](mailto:chris@orkz.net)
+De Kapel is beschikbaar voor samenkomsten van non-commerciële aard, en voorwaarde is dat het vrij toegankelijk is voor bewoners van het ORKZ. Zo faciliteren wij improvisatietheatergroepen en bijeenkomsten van de verschillende organisaties die met de aardbevingsproblematiek in Groningen bezig zijn. 
+
+**Facebook**: [ORKZ Theater de Kapel [fa=external-link /]](https://www.facebook.com/Theaterdekapel/)</br> 
+**Contact**: [jan-roelof@ouderkz.nl [fa=envelope/]](mailto:jan-roelof@ouderkz.nl)
+
 

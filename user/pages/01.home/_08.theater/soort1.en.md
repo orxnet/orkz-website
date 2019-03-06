@@ -1,15 +1,18 @@
 ---
-title: Theater
+title: 'ORKZ Theater de Kapel'
 menu: Theater
 bgcolor: '#F93488'
 layout_classes: image_left
 ---
 
-Theatre "de Kapel"
+ORKZ Theater de Kapel
 ------------------
 
 *Check out [www.theaterdekapel.nl [fa=external-link /]](http://www.theaterdekapel.nl)*
 
-Theatre "de Kapel" (TDK) is a theatre for and by artists. We try to be a stage where artists can completely go their own way. We don’t have a commercial purpose and work only with experienced volunteers. You can play at your own risk or start a collaboration with TDK… anything’s possible! So, theatrical performers, poets, musicians, entertainers, grab your opportunity with TdK. Because we think that everybody has the right to affordable art and culture. We want to take matters into our own hands. For renting the space for rehearsals or auditions, the price is negotiable. No weddings or parties! No loud music, no drums, because of the noise. On Saturdays and Mondays it is not possible to use the chapel after 20:30. Contact us for the conditions. 
+ORKZ Theater de Kapel is a fully equiped theatre where at the moment mostly musical performances are held. Since a few years the 'Concert in de Kapel' is known for its intimate and exciting concerts in very different genres: from traditional to experimental! We also organize jam sessions, and every last friday of the month the poetry event [Poëzie Met [fa=external-link /]](https://www.facebook.com/PoezieMet/)!' is held!
 
-**Contact:** [chris@orkz.net [fa=envelope/]](mailto:chris@orkz.net)
+The Kapel is available for activities of a non-commercial nature, and one condition is that it's freely accesible for residents of the ORKZ. We facilitate for example improv theatre groups and gatherings of different organizations that are preoccupied with the gas related earthquake problems in the province of Groningen.
+
+**Facebook**: [ORKZ Theater de Kapel [fa=external-link /]](https://www.facebook.com/Theaterdekapel/)</br> 
+**Contact**: [jan-roelof@ouderkz.nl [fa=envelope/]](mailto:jan-roelof@ouderkz.nl)
