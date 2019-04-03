@@ -1,26 +1,26 @@
 ---
-title: Enrolment: The Intro
-bgcolor: '#A6C12F'
+title: 'Enrollment: The Intro'
 menu: Enrolment
+bgcolor: '#A6C12F'
 layout_classes: image_right
 ---
 
-Enrolment:<br/>The Intro
+Enrollment:<br/>The Intro
 ---------------------------------
 
-If you want to live in the ORKZ, you have to enrol with the ‘Intro’ (the Introduction Committee). Below are answers to questions you might have about the procedure. If you have a specific question, you can call the Intro. The number is 050-5267250. You can reach us on Thursday afternoon between 14:00 and 18:00. There is also a contact form. 
+If you want to live in the ORKZ, you have to enroll with the ‘Intro’ (the Introduction Committee). Below are answers to questions you might have about the procedure. If you have a specific question, you can call the Intro. The number is 050-5267250. You can reach us on Thursday afternoon between 14:00 and 18:00. There is also a contact form. 
 
-####Enrolment procedure
+####Enrollment procedure
 
-**Registration**: Every Thursday at 20:00 (8pm) at the office of the ORKZ. Be on time, because we lock the door at 20:00 sharp. During this evening we give the ‘intro talk’, with information about living in the ORKZ and the enrolment procedure.
+**Registration**: Every Thursday at 20:00 (8pm) at the office of the ORKZ. Be on time, because we lock the door at 20:00 sharp. During this evening we give the ‘intro talk’, with information about living in the ORKZ and the enrollment procedure.
 
 **Tour**: another part of the process is a tour through the building. During the registration evening you can sign up for a tour. It takes place every other Sunday night at 19:00, and it takes about an hour and a half. The tour guides will show you the whole building, giving you a pretty good understanding of what it means to live in the ORKZ. The tour can be given in English or Dutch, but please let us know ahead of time.
 
 **Handing in your letter**: aspiring residents are also required to hand in an application/motivation letter. It can be written in English or Dutch. You can hand over your letter at the start of the tour, drop it in the mailbox at the door of the office, or hand it in at the office during opening hours (Mondays between 14:00 and 18:00 and Thursdays between 14:00 and 18:00). Don’t forget to put your phone number in the letter.
 
-**Extending your enrolment**: four weeks after your registration you have to extend. There are various ways to do that: call the office, leave a message in the notebook at the office, put a note in the office mailbox or drop by on Thursday afternoons during intro opening hours. After these four weeks, your letter will be put in the ‘active folder.’ Units that are searching for a new neighbour usually pick about three people out of the folder to invite to a getting-to-know-you meeting (‘kennismaking’).
+**Extending your enrollment**: four weeks after your registration you have to extend. There are various ways to do that: call the office, leave a message in the notebook at the office, put a note in the office mailbox or drop by on Thursday afternoons during intro opening hours. After these four weeks, your letter will be put in the ‘active folder.’ Units that are searching for a new neighbour usually pick about three people out of the folder to invite to a getting-to-know-you meeting (‘kennismaking’).
 
-Important: every four weeks you have to extend your enrolment again. If you extend by calling or dropping by, the Intro will inform you about the next extension date.
+Important: every four weeks you have to extend your enrollment again. If you extend by calling or dropping by, the Intro will inform you about the next extension date.
 
 
 <div class="accordion" markdown="1">

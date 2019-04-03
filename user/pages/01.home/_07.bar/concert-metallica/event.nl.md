@@ -1,16 +1,16 @@
 ---
-title: 'Aufglauft + Heavy Faces'
+title: 'Neuk! - BAAS - Devoid'
+media_order: neuk.jpg
 published: true
-date: '09-02-2019 22:00'
+date: '06-04-2019 22:00'
 ---
 
-Doors – 22:00
-Cash only!
+Doors open 22:00 – Be in time because the max capacity might be reached tonight..
+ORKZ BAR = CASH ONLY
+[Facebook event]()https://www.facebook.com/events/351589622330056/
 
-Heavy Faces
+[Neuk](https://www.facebook.com/events/351589622330056/)!: Jaja, je leest het goed. Neuk! in het RKZ! Hardcore punk legendes die way back gaan.. in 1995 verscheen het debuutalbum Dopeheid Troef. Keiharde hardcore, speedmetal en Nederlandstalige raps!
 
-Dit internationale gezelschap met leden uit 3 verschillende landen, brengt een mix van neo-soul, prog. rock, hip-hop en reggae. Hun live shows zijn intens, interactief energiek, technisch krachtig en rauw waar het telt.
+[BAAS](https://www.facebook.com/BAAS-278043352686005/): Een sneltrein van harde riffs, snerpende zang en rammende tracks. 90’s hardcore uit Groningen, dat is BAAS.
 
-AUFGLAUFT
-
-AUFGLAUFT neemt je mee op een instrumentale rondreis door een feestelijke wereld van verschillende muziekstijlen, oftewel Party Jazz! Daarnaast staan ze bekend om hun energieke en interactieve live performance, wat zich altijd uitmondt in een feest. Verwacht jazz, rock, balkan, funk en een breed scala aan andere muziekstijlen. *Stil staan onmogelijk.
+[Devoid](https://www.facebook.com/Devoid-161471014535403/): Brute hardcore uit het Noorden! Klaar om de zaal op te warmen..
