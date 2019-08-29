@@ -9,10 +9,10 @@ layout_classes: image_right
 Expo
 ----
 
-Elke drie maanden is er een expositie in het dagcafé. Medebewoners tonen hun tekeningen, foto's, schilderijen enz. aan het publiek. Exposities worden vaak feestelijk geopend waarbij de kunstenaar iets over zijn of haar werk vertelt. Als je een leuk idee of project hebt, of wanneer je zelf iets wilt tonen, kun je contact opnemen.
+ORKZ-ART organiseert elke twee maanden een expositie in het dagcafé. Getalenteerde bewoners uit het ORKZ en daarbuiten tonen hun tekeningen, foto's, schilderijen aan het publiek. Exposities worden feestelijk geopend met acoustische muziek, dj's en performances en de kunstenaar vertelt iets over zijn of haar werk. Als je een leuk idee of project hebt, of wanneer je zelf iets wilt tonen, kun je contact opnemen.
 
-Exposities worden aangekondigd op deze website. Bezoekers kunnen gewoon binnen lopen om de kunst te bekijken. Omdat het in het Dagcafé is, kun je eventueel een kop koffie of thee drinken.
+Exposities worden aangekondigd op deze website en via ORKZ-ART [facebook pagina [fa=external-link /]](https://www.facebook.com/KunstcommissieORKZ/). Bezoekers kunnen gewoon binnen lopen om de kunst te bekijken. Omdat het in het Dagcafé is, kun je ook altijd een kop koffie of thee drinken komen drinken.
 
-**Contact** Chantalla: chantallaatje@hotmail.com [[fa=envelope/]](mailto:chantallaatje@hotmail.com)
+**Contact** ORKZ-ART; Chantalla & Sander: expo@orkz.net [[fa=envelope/]](mailto:expo@orkz.net)
 
 
