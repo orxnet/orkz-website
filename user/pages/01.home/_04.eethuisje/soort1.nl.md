@@ -12,7 +12,7 @@ Dinsdag, donderdag, vrijdag en zondag kun je lekker mee eten in het eethuisje. D
 Heb je zelf ook interesse om mee te helpen in het eethuisje? (Bijna) iedere maandag vergadert de vrijwilligersgroep in het dagcafe. Spreek een vrijwilliger aan voor meer informatie, of kom gewoon eens langs! 
 
 **Openingstijden:** di/do/vr/zo om 18.30.<br/>
-**Contact/inschrijven** di/do/vr/zo vanaf 15.30, tel. **(050) - 525 76 01**.<br/>
+**Contact/inschrijven** di/do/vr/zo vanaf 15.30, tel. **(06) 39732750**.<br/>
 **Menu** zie de [Facebook-pagina van het eethuisje [fa=external-link /]](https://www.facebook.com/orkzeethuisje/?target=_blank).
 
 

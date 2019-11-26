@@ -11,6 +11,6 @@ On Tuesdays, Thursdays, Fridays and Sundays you can join us for a delicious dinn
 If you want to volunteer in the restaurant, you can come to our meeting, which is held almost every Monday in the dagcafe. Talk to one of the volunteers if you want more information, or just drop by! 
 
 **Opening hours**: Tues./Thurs./Fri./Sun. at 18:30
-**Sign up** Tues./Thurs./Fri./Sun.  after 15:30 call **(050) 5257601**.<br/>
+**Sign up** Tues./Thurs./Fri./Sun.  after 15:30 call **(06) 39732750**.<br/>
 **Menu**: Check the [Facebook-page [fa=external-link /]](https://www.facebook.com/orkzeethuisje/).
  
