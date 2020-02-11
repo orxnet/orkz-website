@@ -14,7 +14,7 @@ Wil je in het ORKZ wonen, schrijf je dan in bij de Intro. Antwoorden op je vrage
 
 **Inschrijving**: Inschrijven kun je elke donderdagavond om 20.00 uur op het kantoor van het ORKZ doen. Kom op tijd, want om stipt 20.00 uur gaat de deur gaat dicht. Je schrijft je dan in als aspirant-bewoner en krijgt dan het intro-praatje te horen waarbij we je vertellen over het wonen in het ORKZ. De inschrijving duurt ongeveer een half uur.  
 
-**Rondleiding**: Tijdens de inschrijving geef je aan wanneer je de rondleiding wilt lopen. De rondleiding vindt plaats op zondagavond om 19.00 uur en duurt ongeveer een uur tot anderhalf uur. De rondleiders nemen je mee door het hele ORKZ. Hierna heb je een aardig beeld van wat het wonen in het ORKZ inhoudt.
+**Rondleiding**: Tijdens de inschrijving geef je aan wanneer je de rondleiding wilt lopen. De rondleiding vindt eens per twee weken plaats op donderdagavond om 19.00 uur en duurt ongeveer een uur tot anderhalf uur. De rondleiders nemen je mee door het hele ORKZ. Hierna heb je een aardig beeld van wat het wonen in het ORKZ inhoudt.
 
 **Je brief inleveren**: Je kunt je brief tijdens de rondleiding afgeven, in de brievenbus in de deur van het kantoor stoppen, of langsbrengen wanneer het kantoor open is op maandagmiddag of donderdagmiddag tussen 14.00 en 16.00 uur. Vergeet niet om je telefoonnummer op je brief te zetten.
 

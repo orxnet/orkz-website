@@ -14,7 +14,7 @@ If you want to live in the ORKZ, you have to enroll with the ‘Intro’ (the In
 
 **Registration**: Every Thursday at 20:00 (8pm) at the office of the ORKZ. Be on time, because we lock the door at 20:00 sharp. During this evening we give the ‘intro talk’, with information about living in the ORKZ and the enrollment procedure.
 
-**Tour**: another part of the process is a tour through the building. During the registration evening you can sign up for a tour. It takes place every other Sunday night at 19:00, and it takes about an hour and a half. The tour guides will show you the whole building, giving you a pretty good understanding of what it means to live in the ORKZ. The tour can be given in English or Dutch, but please let us know ahead of time.
+**Tour**: another part of the process is a tour through the building. During the registration evening you can sign up for a tour. It takes place every other Thursday night at 19:00, and it takes about an hour and a half. The tour guides will show you the whole building, giving you a pretty good understanding of what it means to live in the ORKZ. The tour can be given in English or Dutch, but please let us know ahead of time.
 
 **Handing in your letter**: aspiring residents are also required to hand in an application/motivation letter. It can be written in English or Dutch. You can hand over your letter at the start of the tour, drop it in the mailbox at the door of the office, or hand it in at the office during opening hours (Mondays between 14:00 and 18:00 and Thursdays between 14:00 and 18:00). Don’t forget to put your phone number in the letter.
 
