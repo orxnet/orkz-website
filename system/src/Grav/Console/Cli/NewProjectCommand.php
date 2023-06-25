@@ -1,24 +1,29 @@
 <?php
+
 /**
- * @package    Grav.Console
+ * @package    Grav\Console\Cli
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
 namespace Grav\Console\Cli;
 
-use Grav\Console\ConsoleCommand;
+use Grav\Console\GravCommand;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class NewProjectCommand extends ConsoleCommand
+/**
+ * Class NewProjectCommand
+ * @package Grav\Console\Cli
+ */
+class NewProjectCommand extends GravCommand
 {
     /**
-     *
+     * @return void
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('new-project')
@@ -39,10 +44,12 @@ class NewProjectCommand extends ConsoleCommand
     }
 
     /**
-     * @return int|null|void
+     * @return int
      */
-    protected function serve()
+    protected function serve(): int
     {
+        $io = $this->getIO();
+
         $sandboxCommand = $this->getApplication()->find('sandbox');
         $installCommand = $this->getApplication()->find('install');
 
@@ -58,8 +65,11 @@ class NewProjectCommand extends ConsoleCommand
             '-s'          => $this->input->getOption('symlink')
         ]);
 
-        $sandboxCommand->run($sandboxArguments, $this->output);
-        $installCommand->run($installArguments, $this->output);
+        $error = $sandboxCommand->run($sandboxArguments, $io);
+        if ($error === 0) {
+            $error = $installCommand->run($installArguments, $io);
+        }
 
+        return $error;
     }
 }

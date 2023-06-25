@@ -1,14 +1,27 @@
 <?php
+
 /**
  * @package    Grav\Framework\Cache
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
 namespace Grav\Framework\Cache;
 
+use DateInterval;
+use DateTime;
 use Grav\Framework\Cache\Exception\InvalidArgumentException;
+use stdClass;
+use Traversable;
+use function array_key_exists;
+use function get_class;
+use function gettype;
+use function is_array;
+use function is_int;
+use function is_object;
+use function is_string;
+use function strlen;
 
 /**
  * Cache trait for PSR-16 compatible "Simple Cache" implementation
@@ -18,13 +31,10 @@ trait CacheTrait
 {
     /** @var string */
     private $namespace = '';
-
     /** @var int|null */
     private $defaultLifetime = null;
-
-    /** @var \stdClass */
+    /** @var stdClass */
     private $miss;
-
     /** @var bool */
     private $validation = true;
 
@@ -32,18 +42,20 @@ trait CacheTrait
      * Always call from constructor.
      *
      * @param string $namespace
-     * @param null|int|\DateInterval $defaultLifetime
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @param null|int|DateInterval $defaultLifetime
+     * @return void
+     * @throws InvalidArgumentException
      */
     protected function init($namespace = '', $defaultLifetime = null)
     {
         $this->namespace = (string) $namespace;
         $this->defaultLifetime = $this->convertTtl($defaultLifetime);
-        $this->miss = new \stdClass;
+        $this->miss = new stdClass;
     }
 
     /**
-     * @param $validation
+     * @param bool $validation
+     * @return void
      */
     public function setValidation($validation)
     {
@@ -67,8 +79,10 @@ trait CacheTrait
     }
 
     /**
-     * @inheritdoc
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @param string $key
+     * @param mixed|null $default
+     * @return mixed|null
+     * @throws InvalidArgumentException
      */
     public function get($key, $default = null)
     {
@@ -80,8 +94,11 @@ trait CacheTrait
     }
 
     /**
-     * @inheritdoc
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @param string $key
+     * @param mixed $value
+     * @param null|int|DateInterval $ttl
+     * @return bool
+     * @throws InvalidArgumentException
      */
     public function set($key, $value, $ttl = null)
     {
@@ -94,8 +111,9 @@ trait CacheTrait
     }
 
     /**
-     * @inheritdoc
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @param string $key
+     * @return bool
+     * @throws InvalidArgumentException
      */
     public function delete($key)
     {
@@ -105,7 +123,7 @@ trait CacheTrait
     }
 
     /**
-     * @inheritdoc
+     * @return bool
      */
     public function clear()
     {
@@ -113,18 +131,21 @@ trait CacheTrait
     }
 
     /**
-     * @inheritdoc
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @param iterable $keys
+     * @param mixed|null $default
+     * @return iterable
+     * @throws InvalidArgumentException
      */
     public function getMultiple($keys, $default = null)
     {
-        if ($keys instanceof \Traversable) {
+        if ($keys instanceof Traversable) {
             $keys = iterator_to_array($keys, false);
         } elseif (!is_array($keys)) {
+            $isObject = is_object($keys);
             throw new InvalidArgumentException(
                 sprintf(
                     'Cache keys must be array or Traversable, "%s" given',
-                    is_object($keys) ? get_class($keys) : gettype($keys)
+                     $isObject ? get_class($keys) : gettype($keys)
                 )
             );
         }
@@ -153,18 +174,21 @@ trait CacheTrait
     }
 
     /**
-     * @inheritdoc
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @param iterable $values
+     * @param null|int|DateInterval $ttl
+     * @return bool
+     * @throws InvalidArgumentException
      */
     public function setMultiple($values, $ttl = null)
     {
-        if ($values instanceof \Traversable) {
+        if ($values instanceof Traversable) {
             $values = iterator_to_array($values, true);
         } elseif (!is_array($values)) {
+            $isObject = is_object($values);
             throw new InvalidArgumentException(
                 sprintf(
                     'Cache values must be array or Traversable, "%s" given',
-                    is_object($values) ? get_class($values) : gettype($values)
+                    $isObject ? get_class($values) : gettype($values)
                 )
             );
         }
@@ -184,18 +208,20 @@ trait CacheTrait
     }
 
     /**
-     * @inheritdoc
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @param iterable $keys
+     * @return bool
+     * @throws InvalidArgumentException
      */
     public function deleteMultiple($keys)
     {
-        if ($keys instanceof \Traversable) {
+        if ($keys instanceof Traversable) {
             $keys = iterator_to_array($keys, false);
         } elseif (!is_array($keys)) {
+            $isObject = is_object($keys);
             throw new InvalidArgumentException(
                 sprintf(
                     'Cache keys must be array or Traversable, "%s" given',
-                    is_object($keys) ? get_class($keys) : gettype($keys)
+                    $isObject ? get_class($keys) : gettype($keys)
                 )
             );
         }
@@ -210,8 +236,9 @@ trait CacheTrait
     }
 
     /**
-     * @inheritdoc
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @param string $key
+     * @return bool
+     * @throws InvalidArgumentException
      */
     public function has($key)
     {
@@ -219,11 +246,6 @@ trait CacheTrait
 
         return $this->doHas($key);
     }
-
-    abstract public function doGet($key, $miss);
-    abstract public function doSet($key, $value, $ttl);
-    abstract public function doDelete($key);
-    abstract public function doClear();
 
     /**
      * @param array $keys
@@ -246,7 +268,7 @@ trait CacheTrait
 
     /**
      * @param array $values
-     * @param int $ttl
+     * @param int|null $ttl
      * @return bool
      */
     public function doSetMultiple($values, $ttl)
@@ -275,11 +297,10 @@ trait CacheTrait
         return $success;
     }
 
-    abstract public function doHas($key);
-
     /**
-     * @param string $key
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @param string|mixed $key
+     * @return void
+     * @throws InvalidArgumentException
      */
     protected function validateKey($key)
     {
@@ -296,7 +317,7 @@ trait CacheTrait
         }
         if (strlen($key) > 64) {
             throw new InvalidArgumentException(
-                sprintf('Cache key length must be less than 65 characters, key had %s characters', strlen($key))
+                sprintf('Cache key length must be less than 65 characters, key had %d characters', strlen($key))
             );
         }
         if (strpbrk($key, '{}()/\@:') !== false) {
@@ -308,7 +329,8 @@ trait CacheTrait
 
     /**
      * @param array $keys
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @return void
+     * @throws InvalidArgumentException
      */
     protected function validateKeys($keys)
     {
@@ -322,9 +344,9 @@ trait CacheTrait
     }
 
     /**
-     * @param null|int|\DateInterval    $ttl
+     * @param null|int|DateInterval    $ttl
      * @return int|null
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function convertTtl($ttl)
     {
@@ -336,8 +358,9 @@ trait CacheTrait
             return $ttl;
         }
 
-        if ($ttl instanceof \DateInterval) {
-            $ttl = (int) \DateTime::createFromFormat('U', 0)->add($ttl)->format('U');
+        if ($ttl instanceof DateInterval) {
+            $date = DateTime::createFromFormat('U', '0');
+            $ttl = $date ? (int)$date->add($ttl)->format('U') : 0;
         }
 
         throw new InvalidArgumentException(

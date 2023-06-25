@@ -1,83 +1,133 @@
 <?php
+
 /**
- * @package    Grav.Console
+ * @package    Grav\Console\Cli
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
 namespace Grav\Console\Cli;
 
+use Grav\Common\Backup\Backups;
 use Grav\Common\Grav;
-use Grav\Common\Backup\ZipBackup;
-use Grav\Console\ConsoleCommand;
-use RocketTheme\Toolbox\File\JsonFile;
+use Grav\Console\GravCommand;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Question\ChoiceQuestion;
+use ZipArchive;
+use function count;
 
-class BackupCommand extends ConsoleCommand
+/**
+ * Class BackupCommand
+ * @package Grav\Console\Cli
+ */
+class BackupCommand extends GravCommand
 {
     /** @var string $source */
     protected $source;
-
     /** @var ProgressBar $progress */
     protected $progress;
 
     /**
-     *
+     * @return void
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setName("backup")
+            ->setName('backup')
             ->addArgument(
-                'destination',
+                'id',
                 InputArgument::OPTIONAL,
-                'Where to store the backup (/backup is default)'
-
+                'The ID of the backup profile to perform without prompting'
             )
-            ->setDescription("Creates a backup of the Grav instance")
-            ->setHelp('The <info>backup</info> creates a zipped backup. Optionally can be saved in a different destination.');
+            ->setDescription('Creates a backup of the Grav instance')
+            ->setHelp('The <info>backup</info> creates a zipped backup.');
 
         $this->source = getcwd();
     }
 
     /**
-     * @return int|null|void
+     * @return int
      */
-    protected function serve()
+    protected function serve(): int
     {
-        $this->progress = new ProgressBar($this->output);
-        $this->progress->setFormat('Archiving <cyan>%current%</cyan> files [<green>%bar%</green>] %elapsed:6s% %memory:6s%');
+        $this->initializeGrav();
 
-        Grav::instance()['config']->init();
+        $input = $this->getInput();
+        $io = $this->getIO();
 
-        $destination = ($this->input->getArgument('destination')) ? $this->input->getArgument('destination') : null;
-        $log = JsonFile::instance(Grav::instance()['locator']->findResource("log://backup.log", true, true));
-        $backup = ZipBackup::backup($destination, [$this, 'output']);
+        $io->title('Grav Backup');
 
-        $log->content([
-            'time' => time(),
-            'location' => $backup
-        ]);
-        $log->save();
+        if (!class_exists(ZipArchive::class)) {
+            $io->error('php-zip extension needs to be enabled!');
+            return 1;
+        }
 
-        $this->output->writeln('');
-        $this->output->writeln('');
+        ProgressBar::setFormatDefinition('zip', 'Archiving <cyan>%current%</cyan> files [<green>%bar%</green>] <white>%percent:3s%%</white> %elapsed:6s% <yellow>%message%</yellow>');
 
+        $this->progress = new ProgressBar($this->output, 100);
+        $this->progress->setFormat('zip');
+
+
+        /** @var Backups $backups */
+        $backups = Grav::instance()['backups'];
+        $backups_list = $backups::getBackupProfiles();
+        $backups_names = $backups->getBackupNames();
+
+        $id = null;
+
+        $inline_id = $input->getArgument('id');
+        if (null !== $inline_id && is_numeric($inline_id)) {
+            $id = $inline_id;
+        }
+
+        if (null === $id) {
+            if (count($backups_list) > 1) {
+                $question = new ChoiceQuestion(
+                    'Choose a backup?',
+                    $backups_names,
+                    0
+                );
+                $question->setErrorMessage('Option %s is invalid.');
+                $backup_name = $io->askQuestion($question);
+                $id = array_search($backup_name, $backups_names, true);
+
+                $io->newLine();
+                $io->note('Selected backup: ' . $backup_name);
+            } else {
+                $id = 0;
+            }
+        }
+
+        $backup = $backups::backup($id, function($args) { $this->outputProgress($args); });
+
+        $io->newline(2);
+        $io->success('Backup Successfully Created: ' . $backup);
+
+        return 0;
     }
 
     /**
-     * @param $args
+     * @param array $args
+     * @return void
      */
-    public function output($args)
+    public function outputProgress(array $args): void
     {
         switch ($args['type']) {
+            case 'count':
+                $steps = $args['steps'];
+                $freq = (int)($steps > 100 ? round($steps / 100) : $steps);
+                $this->progress->setMaxSteps($steps);
+                $this->progress->setRedrawFrequency($freq);
+                $this->progress->setMessage('Adding files...');
+                break;
             case 'message':
-                $this->output->writeln($args['message']);
+                $this->progress->setMessage($args['message']);
+                $this->progress->display();
                 break;
             case 'progress':
-                if ($args['complete']) {
+                if (isset($args['complete']) && $args['complete']) {
                     $this->progress->finish();
                 } else {
                     $this->progress->advance();
@@ -85,6 +135,4 @@ class BackupCommand extends ConsoleCommand
                 break;
         }
     }
-
 }
-

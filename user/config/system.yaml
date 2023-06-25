@@ -84,12 +84,14 @@ cache:
   allow_webserver_gzip: false
 twig:
   cache: false
-  debug: true
+  debug: false
   auto_reload: true
   autoescape: false
   undefined_functions: true
   undefined_filters: true
   umask_fix: false
+strict_mode:
+  twig_compat: true
 assets:
   css_pipeline: false
   css_pipeline_include_externals: true
@@ -105,13 +107,13 @@ assets:
   collections:
     jquery: 'system://assets/jquery/jquery-2.x.min.js'
 errors:
-  display: '1'
+  display: '0'
   log: true
 debugger:
   enabled: false
   shutdown:
     close_connection: true
-  twig: true
+  twig: false
 images:
   default_image_quality: 85
   cache_all: false

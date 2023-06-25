@@ -1,12 +1,19 @@
 <?php
+
 /**
  * @package    Grav\Framework\ContentBlock
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
 namespace Grav\Framework\ContentBlock;
+
+use Exception;
+use Grav\Framework\Compat\Serializable;
+use InvalidArgumentException;
+use RuntimeException;
+use function get_class;
 
 /**
  * Class to create nested blocks of content.
@@ -22,15 +29,25 @@ namespace Grav\Framework\ContentBlock;
  */
 class ContentBlock implements ContentBlockInterface
 {
+    use Serializable;
+
+    /** @var int */
     protected $version = 1;
+    /** @var string */
     protected $id;
+    /** @var string */
     protected $tokenTemplate = '@@BLOCK-%s@@';
+    /** @var string */
     protected $content = '';
+    /** @var array */
     protected $blocks = [];
+    /** @var string */
     protected $checksum;
+    /** @var bool */
+    protected $cached = true;
 
     /**
-     * @param string $id
+     * @param string|null $id
      * @return static
      */
     public static function create($id = null)
@@ -41,23 +58,23 @@ class ContentBlock implements ContentBlockInterface
     /**
      * @param array $serialized
      * @return ContentBlockInterface
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public static function fromArray(array $serialized)
     {
         try {
-            $type = isset($serialized['_type']) ? $serialized['_type'] : null;
-            $id = isset($serialized['id']) ? $serialized['id'] : null;
+            $type = $serialized['_type'] ?? null;
+            $id = $serialized['id'] ?? null;
 
-            if (!$type || !$id || !is_a($type, 'Grav\Framework\ContentBlock\ContentBlockInterface', true)) {
-                throw new \InvalidArgumentException('Bad data');
+            if (!$type || !$id || !is_a($type, ContentBlockInterface::class, true)) {
+                throw new InvalidArgumentException('Bad data');
             }
 
             /** @var ContentBlockInterface $instance */
             $instance = new $type($id);
             $instance->build($serialized);
-        } catch (\Exception $e) {
-            throw new \InvalidArgumentException(sprintf('Cannot unserialize Block: %s', $e->getMessage()), $e->getCode(), $e);
+        } catch (Exception $e) {
+            throw new InvalidArgumentException(sprintf('Cannot unserialize Block: %s', $e->getMessage()), $e->getCode(), $e);
         }
 
         return $instance;
@@ -66,7 +83,7 @@ class ContentBlock implements ContentBlockInterface
     /**
      * Block constructor.
      *
-     * @param string $id
+     * @param string|null $id
      */
     public function __construct($id = null)
     {
@@ -95,10 +112,7 @@ class ContentBlock implements ContentBlockInterface
     public function toArray()
     {
         $blocks = [];
-        /**
-         * @var string $id
-         * @var ContentBlockInterface $block
-         */
+        /** @var ContentBlockInterface $block */
         foreach ($this->blocks as $block) {
             $blocks[$block->getId()] = $block->toArray();
         }
@@ -106,7 +120,8 @@ class ContentBlock implements ContentBlockInterface
         $array = [
             '_type' => get_class($this),
             '_version' => $this->version,
-            'id' => $this->id
+            'id' => $this->id,
+            'cached' => $this->cached
         ];
 
         if ($this->checksum) {
@@ -146,25 +161,28 @@ class ContentBlock implements ContentBlockInterface
     /**
      * @return string
      */
+    #[\ReturnTypeWillChange]
     public function __toString()
     {
         try {
             return $this->toString();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return sprintf('Error while rendering block: %s', $e->getMessage());
         }
     }
 
     /**
      * @param array $serialized
-     * @throws \RuntimeException
+     * @return void
+     * @throws RuntimeException
      */
     public function build(array $serialized)
     {
         $this->checkVersion($serialized);
 
-        $this->id = isset($serialized['id']) ? $serialized['id'] : $this->generateId();
-        $this->checksum = isset($serialized['checksum']) ? $serialized['checksum'] : null;
+        $this->id = $serialized['id'] ?? $this->generateId();
+        $this->checksum = $serialized['checksum'] ?? null;
+        $this->cached = $serialized['cached'] ?? null;
 
         if (isset($serialized['content'])) {
             $this->setContent($serialized['content']);
@@ -174,6 +192,34 @@ class ContentBlock implements ContentBlockInterface
         foreach ($blocks as $block) {
             $this->addBlock(self::fromArray($block));
         }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCached()
+    {
+        if (!$this->cached) {
+            return false;
+        }
+
+        foreach ($this->blocks as $block) {
+            if (!$block->isCached()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @return $this
+     */
+    public function disableCache()
+    {
+        $this->cached = false;
+
+        return $this;
     }
 
     /**
@@ -218,20 +264,20 @@ class ContentBlock implements ContentBlockInterface
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function serialize()
+    final public function __serialize(): array
     {
-        return serialize($this->toArray());
+        return $this->toArray();
     }
 
     /**
-     * @param string $serialized
+     * @param array $data
+     * @return void
      */
-    public function unserialize($serialized)
+    final public function __unserialize(array $data): void
     {
-        $array = unserialize($serialized);
-        $this->build($array);
+        $this->build($data);
     }
 
     /**
@@ -244,13 +290,14 @@ class ContentBlock implements ContentBlockInterface
 
     /**
      * @param array $serialized
-     * @throws \RuntimeException
+     * @return void
+     * @throws RuntimeException
      */
     protected function checkVersion(array $serialized)
     {
         $version = isset($serialized['_version']) ? (int) $serialized['_version'] : 1;
         if ($version !== $this->version) {
-            throw new \RuntimeException(sprintf('Unsupported version %s', $version));
+            throw new RuntimeException(sprintf('Unsupported version %s', $version));
         }
     }
 }

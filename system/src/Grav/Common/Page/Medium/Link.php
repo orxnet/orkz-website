@@ -1,43 +1,63 @@
 <?php
+
 /**
- * @package    Grav.Common.Page
+ * @package    Grav\Common\Page
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
 namespace Grav\Common\Page\Medium;
 
-class Link implements RenderableInterface
+use BadMethodCallException;
+use Grav\Common\Media\Interfaces\MediaLinkInterface;
+use Grav\Common\Media\Interfaces\MediaObjectInterface;
+use RuntimeException;
+use function call_user_func_array;
+use function get_class;
+use function is_array;
+use function is_callable;
+
+/**
+ * Class Link
+ * @package Grav\Common\Page\Medium
+ */
+class Link implements RenderableInterface, MediaLinkInterface
 {
     use ParsedownHtmlTrait;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $attributes = [];
+    /** @var MediaObjectInterface|MediaLinkInterface */
     protected $source;
 
     /**
      * Construct.
      * @param array  $attributes
-     * @param Medium $medium
+     * @param MediaObjectInterface $medium
      */
-    public function __construct(array $attributes, Medium $medium)
+    public function __construct(array $attributes, MediaObjectInterface $medium)
     {
         $this->attributes = $attributes;
-        $this->source = $medium->reset()->thumbnail('auto')->display('thumbnail');
-        $this->source->linked = true;
+
+        $source = $medium->reset()->thumbnail('auto')->display('thumbnail');
+        if (!$source instanceof MediaObjectInterface) {
+            throw new RuntimeException('Media has no thumbnail set');
+        }
+
+        $source->set('linked', true);
+
+        $this->source = $source;
     }
 
     /**
      * Get an element (is array) that can be rendered by the Parsedown engine
      *
-     * @param  string  $title
-     * @param  string  $alt
-     * @param  string  $class
-     * @param  string  $id
-     * @param  boolean $reset
+     * @param  string|null  $title
+     * @param  string|null  $alt
+     * @param  string|null  $class
+     * @param  string|null  $id
+     * @param  bool $reset
      * @return array
      */
     public function parsedownElement($title = null, $alt = null, $class = null, $id = null, $reset = true)
@@ -47,7 +67,7 @@ class Link implements RenderableInterface
         return [
             'name' => 'a',
             'attributes' => $this->attributes,
-            'handler' => is_string($innerElement) ? 'line' : 'element',
+            'handler' => is_array($innerElement) ? 'element' : 'line',
             'text' => $innerElement
         ];
     }
@@ -59,12 +79,24 @@ class Link implements RenderableInterface
      * @param mixed $args
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function __call($method, $args)
     {
-        $this->source = call_user_func_array(array($this->source, $method), $args);
+        $object = $this->source;
+        $callable = [$object, $method];
+        if (!is_callable($callable)) {
+            throw new BadMethodCallException(get_class($object) . '::' . $method . '() not found.');
+        }
 
-        // Don't start nesting links, if user has multiple link calls in his
-        // actions, we will drop the previous links.
-        return $this->source instanceof Link ? $this->source : $this;
+        $object = call_user_func_array($callable, $args);
+        if (!$object instanceof MediaLinkInterface) {
+            // Don't start nesting links, if user has multiple link calls in his
+            // actions, we will drop the previous links.
+            return $this;
+        }
+
+        $this->source = $object;
+
+        return $object;
     }
 }

@@ -12,5 +12,5 @@ If you want to volunteer in the restaurant, you can come to our meeting, which i
 
 **Opening hours**: Tues./Thurs./Fri./Sun. at 18:30
 **Sign up** Tues./Thurs./Fri./Sun.  after 15:30 call **(06) 39732750**.<br/>
-**Menu**: Check the [Facebook-page [fa=external-link /]](https://www.facebook.com/orkzeethuisje/).
+**Menu**: Check the [Facebook-page [fa=external-link /]](https://www.facebook.com/orkzdagcafe/).
  

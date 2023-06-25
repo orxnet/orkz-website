@@ -1,36 +1,38 @@
 #!/usr/bin/env php
 <?php
-define('GRAV_CLI', true);
 
-if (!file_exists(__DIR__ . '/../vendor')){
-    require_once __DIR__ . '/../system/src/Grav/Common/Composer.php';
-}
+/**
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
+ * @license    MIT License; see LICENSE file for details.
+ */
 
 use Grav\Common\Composer;
-use Grav\Common\Config\Setup;
+use Grav\Common\Grav;
+use Grav\Console\Application\GpmApplication;
 
-if (!file_exists(__DIR__ . '/../vendor')){
+\define('GRAV_CLI', true);
+\define('GRAV_REQUEST_TIME', microtime(true));
+
+if (!file_exists(__DIR__ . '/../vendor/autoload.php')){
     // Before we can even start, we need to run composer first
+    require_once __DIR__ . '/../system/src/Grav/Common/Composer.php';
+
     $composer = Composer::getComposerExecutor();
     echo "Preparing to install vendor dependencies...\n\n";
     echo system($composer.' --working-dir="'.__DIR__.'/../" --no-interaction --no-dev --prefer-dist -o install');
     echo "\n\n";
 }
 
-use Symfony\Component\Console\Application;
-use Grav\Common\Grav;
+$autoload = require __DIR__ . '/../vendor/autoload.php';
 
-$autoload = require_once(__DIR__ . '/../vendor/autoload.php');
+// Set timezone to default, falls back to system if php.ini not set
+date_default_timezone_set(@date_default_timezone_get());
 
-if (version_compare($ver = PHP_VERSION, $req = GRAV_PHP_MIN, '<')) {
-    exit(sprintf("You are running PHP %s, but Grav needs at least PHP %s to run.\n", $ver, $req));
-}
+// Set internal encoding.
+@ini_set('default_charset', 'UTF-8');
+mb_internal_encoding('UTF-8');
 
-if (!ini_get('date.timezone')) {
-    date_default_timezone_set('UTC');
-}
-
-if (!file_exists(ROOT_DIR . 'index.php')) {
+if (!file_exists(GRAV_ROOT . '/index.php')) {
     exit('FATAL: Must be run from ROOT directory of Grav!');
 }
 
@@ -38,36 +40,7 @@ if (!function_exists('curl_version')) {
     exit('FATAL: GPM requires PHP Curl module to be installed');
 }
 
-$climate = new League\CLImate\CLImate;
-$climate->arguments->add([
-    'environment' => [
-        'prefix'        => 'e',
-        'longPrefix'    => 'env',
-        'description'   => 'Configuration Environment',
-        'defaultValue'  => 'localhost'
-    ]
-]);
-$climate->arguments->parse();
-$environment = $climate->arguments->get('environment');
-
-// Set up environment based on params.
-Setup::$environment = $environment;
-
 $grav = Grav::instance(array('loader' => $autoload));
-$grav['uri']->init();
-$grav['config']->init();
-$grav['streams'];
 
-$app = new Application('Grav Package Manager', GRAV_VERSION);
-$app->addCommands(array(
-    new \Grav\Console\Gpm\IndexCommand(),
-    new \Grav\Console\Gpm\VersionCommand(),
-    new \Grav\Console\Gpm\InfoCommand(),
-    new \Grav\Console\Gpm\InstallCommand(),
-    new \Grav\Console\Gpm\UninstallCommand(),
-    new \Grav\Console\Gpm\UpdateCommand(),
-    new \Grav\Console\Gpm\SelfupgradeCommand(),
-    new \Grav\Console\Gpm\DirectInstallCommand(),
-));
-
+$app = new GpmApplication('Grav Package Manager', GRAV_VERSION);
 $app->run();

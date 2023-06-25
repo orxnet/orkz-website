@@ -1,20 +1,40 @@
 <?php
+
 /**
- * @package    Grav.Common.Processors
+ * @package    Grav\Common\Processors
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
 namespace Grav\Common\Processors;
 
-class DebuggerAssetsProcessor extends ProcessorBase implements ProcessorInterface
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+
+/**
+ * Class DebuggerAssetsProcessor
+ * @package Grav\Common\Processors
+ */
+class DebuggerAssetsProcessor extends ProcessorBase
 {
+    /** @var string */
     public $id = 'debugger_assets';
+    /** @var string */
     public $title = 'Debugger Assets';
 
-    public function process()
+    /**
+     * @param ServerRequestInterface $request
+     * @param RequestHandlerInterface $handler
+     * @return ResponseInterface
+     */
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $this->startTimer();
         $this->container['debugger']->addAssets();
+        $this->stopTimer();
+
+        return $handler->handle($request);
     }
 }

@@ -1,8 +1,9 @@
 <?php
+
 /**
- * @package    Grav.Common.Config
+ * @package    Grav\Common\Config
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
@@ -10,22 +11,30 @@ namespace Grav\Common\Config;
 
 use Grav\Common\File\CompiledYamlFile;
 
+/**
+ * Class CompiledLanguages
+ * @package Grav\Common\Config
+ */
 class CompiledLanguages extends CompiledBase
 {
     /**
-     * @var int Version number for the compiled file.
+     * CompiledLanguages constructor.
+     * @param string $cacheFolder
+     * @param array $files
+     * @param string $path
      */
-    public $version = 1;
+    public function __construct($cacheFolder, array $files, $path)
+    {
+        parent::__construct($cacheFolder, $files, $path);
 
-    /**
-     * @var Languages  Configuration object.
-     */
-    protected $object;
+        $this->version = 1;
+    }
 
     /**
      * Create configuration object.
      *
      * @param  array  $data
+     * @return void
      */
     protected function createObject(array $data = [])
     {
@@ -34,6 +43,8 @@ class CompiledLanguages extends CompiledBase
 
     /**
      * Finalize configuration object.
+     *
+     * @return void
      */
     protected function finalizeObject()
     {
@@ -44,6 +55,8 @@ class CompiledLanguages extends CompiledBase
 
     /**
      * Function gets called when cached configuration is saved.
+     *
+     * @return void
      */
     public function modified()
     {
@@ -55,6 +68,7 @@ class CompiledLanguages extends CompiledBase
      *
      * @param  string  $name  Name of the position.
      * @param  string  $filename  File to be loaded.
+     * @return void
      */
     protected function loadFile($name, $filename)
     {

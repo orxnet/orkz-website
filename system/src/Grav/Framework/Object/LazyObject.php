@@ -1,13 +1,15 @@
 <?php
+
 /**
  * @package    Grav\Framework\Object
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
 namespace Grav\Framework\Object;
 
+use ArrayAccess;
 use Grav\Framework\Object\Access\NestedArrayAccessTrait;
 use Grav\Framework\Object\Access\NestedPropertyTrait;
 use Grav\Framework\Object\Access\OverloadedPropertyTrait;
@@ -16,11 +18,17 @@ use Grav\Framework\Object\Interfaces\NestedObjectInterface;
 use Grav\Framework\Object\Property\LazyPropertyTrait;
 
 /**
- * Lazy Object class.
+ * Lazy Objects keep their data in both protected object properties and falls back to a stored array if property does
+ * not exist or is not initialized.
  *
  * @package Grav\Framework\Object
+ * @implements ArrayAccess<string,mixed>
  */
-class LazyObject implements NestedObjectInterface, \ArrayAccess
+class LazyObject implements NestedObjectInterface, ArrayAccess
 {
-    use ObjectTrait, LazyPropertyTrait, NestedPropertyTrait, OverloadedPropertyTrait, NestedArrayAccessTrait;
+    use ObjectTrait;
+    use LazyPropertyTrait;
+    use NestedPropertyTrait;
+    use OverloadedPropertyTrait;
+    use NestedArrayAccessTrait;
 }

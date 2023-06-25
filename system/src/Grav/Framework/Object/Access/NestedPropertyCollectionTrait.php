@@ -1,8 +1,9 @@
 <?php
+
 /**
  * @package    Grav\Framework\Object
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
@@ -18,7 +19,7 @@ trait NestedPropertyCollectionTrait
 {
     /**
      * @param string $property      Object property to be matched.
-     * @param string $separator     Separator, defaults to '.'
+     * @param string|null $separator     Separator, defaults to '.'
      * @return array                Key/Value pairs of the properties.
      */
     public function hasNestedProperty($property, $separator = null)
@@ -36,7 +37,7 @@ trait NestedPropertyCollectionTrait
     /**
      * @param string $property      Object property to be fetched.
      * @param mixed $default        Default value if not set.
-     * @param string $separator     Separator, defaults to '.'
+     * @param string|null $separator     Separator, defaults to '.'
      * @return array                Key/Value pairs of the properties.
      */
     public function getNestedProperty($property, $default = null, $separator = null)
@@ -53,8 +54,8 @@ trait NestedPropertyCollectionTrait
 
     /**
      * @param string $property      Object property to be updated.
-     * @param string $value         New value.
-     * @param string $separator     Separator, defaults to '.'
+     * @param mixed  $value         New value.
+     * @param string|null $separator     Separator, defaults to '.'
      * @return $this
      */
     public function setNestedProperty($property, $value, $separator = null)
@@ -69,7 +70,7 @@ trait NestedPropertyCollectionTrait
 
     /**
      * @param string $property      Object property to be updated.
-     * @param string $separator     Separator, defaults to '.'
+     * @param string|null $separator     Separator, defaults to '.'
      * @return $this
      */
     public function unsetNestedProperty($property, $separator = null)
@@ -85,7 +86,7 @@ trait NestedPropertyCollectionTrait
     /**
      * @param string $property      Object property to be updated.
      * @param string $default       Default value.
-     * @param string $separator     Separator, defaults to '.'
+     * @param string|null $separator     Separator, defaults to '.'
      * @return $this
      */
     public function defNestedProperty($property, $default, $separator = null)
@@ -102,7 +103,7 @@ trait NestedPropertyCollectionTrait
      * Group items in the collection by a field.
      *
      * @param string $property      Object property to be used to make groups.
-     * @param string $separator     Separator, defaults to '.'
+     * @param string|null $separator     Separator, defaults to '.'
      * @return array
      */
     public function group($property, $separator = null)
@@ -116,9 +117,4 @@ trait NestedPropertyCollectionTrait
 
         return $list;
     }
-
-    /**
-     * @return \Traversable
-     */
-    abstract public function getIterator();
 }

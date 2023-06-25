@@ -1,12 +1,16 @@
 <?php
+
 /**
  * @package    Grav\Framework\Uri
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
 namespace Grav\Framework\Uri;
+
+use InvalidArgumentException;
+use function is_string;
 
 /**
  * Class Uri
@@ -17,7 +21,7 @@ class UriFactory
     /**
      * @param array $env
      * @return Uri
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public static function createFromEnvironment(array $env)
     {
@@ -27,7 +31,7 @@ class UriFactory
     /**
      * @param string $uri
      * @return Uri
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public static function createFromString($uri)
     {
@@ -39,7 +43,7 @@ class UriFactory
      *
      * @param array $parts
      * @return Uri
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public static function createFromParts(array $parts)
     {
@@ -49,7 +53,7 @@ class UriFactory
     /**
      * @param array $env
      * @return array
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public static function parseUrlFromEnvironment(array $env)
     {
@@ -57,13 +61,13 @@ class UriFactory
         if (isset($env['REQUEST_SCHEME'])) {
             $scheme = strtolower($env['REQUEST_SCHEME']);
         } else {
-            $https = isset($env['HTTPS']) ? $env['HTTPS'] : '';
+            $https = $env['HTTPS'] ?? '';
             $scheme = (empty($https) || strtolower($https) === 'off') ? 'http' : 'https';
         }
 
         // Build user and password.
-        $user = isset($env['PHP_AUTH_USER']) ? $env['PHP_AUTH_USER'] : '';
-        $pass = isset($env['PHP_AUTH_PW']) ? $env['PHP_AUTH_PW'] : '';
+        $user = $env['PHP_AUTH_USER'] ?? '';
+        $pass = $env['PHP_AUTH_PW'] ?? '';
 
         // Build host.
         $host = 'localhost';
@@ -79,17 +83,17 @@ class UriFactory
         $port = isset($env['SERVER_PORT']) ? (int)$env['SERVER_PORT'] : null;
 
         // Build path.
-        $request_uri = isset($env['REQUEST_URI']) ? $env['REQUEST_URI'] : '';
+        $request_uri = $env['REQUEST_URI'] ?? '';
         $path = parse_url('http://example.com' . $request_uri, PHP_URL_PATH);
 
         // Build query string.
-        $query = isset($env['QUERY_STRING']) ? $env['QUERY_STRING'] : '';
+        $query = $env['QUERY_STRING'] ?? '';
         if ($query === '') {
             $query = parse_url('http://example.com' . $request_uri, PHP_URL_QUERY);
         }
 
         // Support ngnix routes.
-        if (strpos($query, '_url=') === 0) {
+        if (strpos((string) $query, '_url=') === 0) {
             parse_str($query, $q);
             unset($q['_url']);
             $query = http_build_query($q);
@@ -111,23 +115,25 @@ class UriFactory
      *
      * @param string $url
      * @return array
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public static function parseUrl($url)
     {
         if (!is_string($url)) {
-            throw new \InvalidArgumentException('URL must be a string');
+            throw new InvalidArgumentException('URL must be a string');
         }
 
         $encodedUrl = preg_replace_callback(
             '%[^:/@?&=#]+%u',
-            function ($matches) { return rawurlencode($matches[0]); },
+            static function ($matches) {
+                return rawurlencode($matches[0]);
+            },
             $url
         );
 
-        $parts = parse_url($encodedUrl);
+        $parts = is_string($encodedUrl) ? parse_url($encodedUrl) : false;
         if ($parts === false) {
-            throw new \InvalidArgumentException('Malformed URL: ' . $encodedUrl);
+            throw new InvalidArgumentException("Malformed URL: {$url}");
         }
 
         return $parts;
@@ -154,6 +160,12 @@ class UriFactory
      */
     public static function buildQuery(array $params)
     {
-        return $params ? http_build_query($params,  null, ini_get('arg_separator.output'), PHP_QUERY_RFC3986) : '';
+        if (!$params) {
+            return '';
+        }
+
+        $separator = ini_get('arg_separator.output') ?: '&';
+
+        return http_build_query($params, '', $separator, PHP_QUERY_RFC3986);
     }
 }

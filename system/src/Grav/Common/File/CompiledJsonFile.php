@@ -1,8 +1,9 @@
 <?php
+
 /**
- * @package    Grav.Common.File
+ * @package    Grav\Common\File
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
@@ -10,6 +11,10 @@ namespace Grav\Common\File;
 
 use RocketTheme\Toolbox\File\JsonFile;
 
+/**
+ * Class CompiledJsonFile
+ * @package Grav\Common\File
+ */
 class CompiledJsonFile extends JsonFile
 {
     use CompiledFile;
@@ -19,10 +24,10 @@ class CompiledJsonFile extends JsonFile
      *
      * @param string $var
      * @param bool $assoc
-     * @return array mixed
+     * @return array
      */
     protected function decode($var, $assoc = true)
     {
-        return (array) json_decode($var, $assoc);
+        return (array)json_decode($var, $assoc);
     }
 }

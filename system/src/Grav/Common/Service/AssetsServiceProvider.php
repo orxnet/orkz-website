@@ -1,8 +1,9 @@
 <?php
+
 /**
- * @package    Grav.Common.Service
+ * @package    Grav\Common\Service
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
@@ -12,10 +13,20 @@ use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 use Grav\Common\Assets;
 
+/**
+ * Class AssetsServiceProvider
+ * @package Grav\Common\Service
+ */
 class AssetsServiceProvider implements ServiceProviderInterface
 {
+    /**
+     * @param Container $container
+     * @return void
+     */
     public function register(Container $container)
     {
-        $container['assets'] = new Assets();
+        $container['assets'] = function () {
+            return new Assets();
+        };
     }
 }

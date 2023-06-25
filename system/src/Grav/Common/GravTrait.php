@@ -1,30 +1,33 @@
 <?php
+
 /**
- * @package    Grav.Common
+ * @package    Grav\Common
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
 namespace Grav\Common;
 
 /**
- * @deprecated 1.4 Use Grav::instance() instead
+ * @deprecated 1.4 Use Grav::instance() instead.
  */
 trait GravTrait
 {
+    /** @var Grav */
     protected static $grav;
 
     /**
      * @return Grav
+     * @deprecated 1.4 Use Grav::instance() instead.
      */
     public static function getGrav()
     {
-        if (!self::$grav) {
+        user_error(__TRAIT__ . ' is deprecated since Grav 1.4, use Grav::instance() instead', E_USER_DEPRECATED);
+
+        if (null === self::$grav) {
             self::$grav = Grav::instance();
         }
-
-        user_error(__TRAIT__ . ' is deprecated since Grav 1.4, use Grav::instance() instead', E_USER_DEPRECATED);
 
         return self::$grav;
     }

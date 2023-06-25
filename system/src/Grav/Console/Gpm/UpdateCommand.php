@@ -1,8 +1,9 @@
 <?php
+
 /**
- * @package    Grav.Console
+ * @package    Grav\Console\Gpm
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
@@ -10,60 +11,46 @@ namespace Grav\Console\Gpm;
 
 use Grav\Common\GPM\GPM;
 use Grav\Common\GPM\Installer;
-use Grav\Console\ConsoleCommand;
 use Grav\Common\GPM\Upgrader;
+use Grav\Console\GpmCommand;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use ZipArchive;
+use function array_key_exists;
+use function count;
 
-class UpdateCommand extends ConsoleCommand
+/**
+ * Class UpdateCommand
+ * @package Grav\Console\Gpm
+ */
+class UpdateCommand extends GpmCommand
 {
-    /**
-     * @var
-     */
+    /** @var array */
     protected $data;
-    /**
-     * @var
-     */
-    protected $extensions;
-    /**
-     * @var
-     */
-    protected $updatable;
-    /**
-     * @var
-     */
+    /** @var string */
     protected $destination;
-    /**
-     * @var
-     */
+    /** @var string */
     protected $file;
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $types = ['plugins', 'themes'];
-    /**
-     * @var GPM $gpm
-     */
+    /** @var GPM  */
     protected $gpm;
-
+    /** @var string */
     protected $all_yes;
-
+    /** @var string */
     protected $overwrite;
-
-    /**
-     * @var Upgrader
-     */
+    /** @var Upgrader */
     protected $upgrader;
 
     /**
-     *
+     * @return void
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setName("update")
+            ->setName('update')
             ->addOption(
                 'force',
                 'f',
@@ -106,83 +93,93 @@ class UpdateCommand extends ConsoleCommand
                 InputArgument::IS_ARRAY | InputArgument::OPTIONAL,
                 'The package or packages that is desired to update. By default all available updates will be applied.'
             )
-            ->setDescription("Detects and performs an update of plugins and themes when available")
+            ->setDescription('Detects and performs an update of plugins and themes when available')
             ->setHelp('The <info>update</info> command updates plugins and themes when a new version is available');
     }
 
     /**
-     * @return int|null|void
+     * @return int
      */
-    protected function serve()
+    protected function serve(): int
     {
-        $this->upgrader = new Upgrader($this->input->getOption('force'));
+        $input = $this->getInput();
+        $io = $this->getIO();
+
+        if (!class_exists(ZipArchive::class)) {
+            $io->title('GPM Update');
+            $io->error('php-zip extension needs to be enabled!');
+
+            return 1;
+        }
+
+        $this->upgrader = new Upgrader($input->getOption('force'));
         $local = $this->upgrader->getLocalVersion();
         $remote = $this->upgrader->getRemoteVersion();
         if ($local !== $remote) {
-            $this->output->writeln("<yellow>WARNING</yellow>: A new version of Grav is available. You should update Grav before updating plugins and themes. If you continue without updating Grav, some plugins or themes may stop working.");
-            $this->output->writeln("");
-            $questionHelper = $this->getHelper('question');
-            $question = new ConfirmationQuestion("Continue with the update process? [Y|n] ", true);
-            $answer = $questionHelper->ask($this->input, $this->output, $question);
+            $io->writeln('<yellow>WARNING</yellow>: A new version of Grav is available. You should update Grav before updating plugins and themes. If you continue without updating Grav, some plugins or themes may stop working.');
+            $io->newLine();
+            $question = new ConfirmationQuestion('Continue with the update process? [Y|n] ', true);
+            $answer = $io->askQuestion($question);
 
             if (!$answer) {
-                $this->output->writeln("<red>Update aborted. Exiting...</red>");
-                exit;
+                $io->writeln('<red>Update aborted. Exiting...</red>');
+
+                return 1;
             }
         }
 
-        $this->gpm = new GPM($this->input->getOption('force'));
+        $this->gpm = new GPM($input->getOption('force'));
 
-        $this->all_yes = $this->input->getOption('all-yes');
-        $this->overwrite = $this->input->getOption('overwrite');
+        $this->all_yes = $input->getOption('all-yes');
+        $this->overwrite = $input->getOption('overwrite');
 
         $this->displayGPMRelease();
 
-        $this->destination = realpath($this->input->getOption('destination'));
+        $this->destination = realpath($input->getOption('destination'));
 
         if (!Installer::isGravInstance($this->destination)) {
-            $this->output->writeln("<red>ERROR</red>: " . Installer::lastErrorMsg());
+            $io->writeln('<red>ERROR</red>: ' . Installer::lastErrorMsg());
             exit;
         }
-        if ($this->input->getOption('plugins') === false && $this->input->getOption('themes') === false) {
+        if ($input->getOption('plugins') === false && $input->getOption('themes') === false) {
             $list_type = ['plugins' => true, 'themes' => true];
         } else {
-            $list_type['plugins'] = $this->input->getOption('plugins');
-            $list_type['themes'] = $this->input->getOption('themes');
+            $list_type['plugins'] = $input->getOption('plugins');
+            $list_type['themes'] = $input->getOption('themes');
         }
 
         if ($this->overwrite) {
             $this->data = $this->gpm->getInstallable($list_type);
-            $description = " can be overwritten";
+            $description = ' can be overwritten';
         } else {
             $this->data = $this->gpm->getUpdatable($list_type);
-            $description = " need updating";
+            $description = ' need updating';
         }
 
-        $only_packages = array_map('strtolower', $this->input->getArgument('package'));
+        $only_packages = array_map('strtolower', $input->getArgument('package'));
 
         if (!$this->overwrite && !$this->data['total']) {
-            $this->output->writeln("Nothing to update.");
-            exit;
+            $io->writeln('Nothing to update.');
+
+            return 0;
         }
 
-        $this->output->write("Found <green>" . $this->gpm->countInstalled() . "</green> packages installed of which <magenta>" . $this->data['total'] . "</magenta>" . $description);
+        $io->write("Found <green>{$this->gpm->countInstalled()}</green> packages installed of which <magenta>{$this->data['total']}</magenta>{$description}");
 
         $limit_to = $this->userInputPackages($only_packages);
 
-        $this->output->writeln('');
+        $io->newLine();
 
-        unset($this->data['total']);
-        unset($limit_to['total']);
+        unset($this->data['total'], $limit_to['total']);
 
 
         // updates review
         $slugs = [];
 
-        $index = 0;
+        $index = 1;
         foreach ($this->data as $packages) {
             foreach ($packages as $slug => $package) {
-                if (count($only_packages) && !array_key_exists($slug, $limit_to)) {
+                if (!array_key_exists($slug, $limit_to) && count($only_packages)) {
                     continue;
                 }
 
@@ -190,13 +187,13 @@ class UpdateCommand extends ConsoleCommand
                     $package->available = $package->version;
                 }
 
-                $this->output->writeln(
-                // index
-                    str_pad($index++ + 1, 2, '0', STR_PAD_LEFT) . ". " .
+                $io->writeln(
+                    // index
+                    str_pad((string)$index++, 2, '0', STR_PAD_LEFT) . '. ' .
                     // name
-                    "<cyan>" . str_pad($package->name, 15) . "</cyan> " .
+                    '<cyan>' . str_pad($package->name, 15) . '</cyan> ' .
                     // version
-                    "[v<magenta>" . $package->version . "</magenta> -> v<green>" . $package->available . "</green>]"
+                    "[v<magenta>{$package->version}</magenta> -> v<green>{$package->available}</green>]"
                 );
                 $slugs[] = $slug;
             }
@@ -204,14 +201,14 @@ class UpdateCommand extends ConsoleCommand
 
         if (!$this->all_yes) {
             // prompt to continue
-            $this->output->writeln("");
-            $questionHelper = $this->getHelper('question');
-            $question = new ConfirmationQuestion("Continue with the update process? [Y|n] ", true);
-            $answer = $questionHelper->ask($this->input, $this->output, $question);
+            $io->newLine();
+            $question = new ConfirmationQuestion('Continue with the update process? [Y|n] ', true);
+            $answer = $io->askQuestion($question);
 
             if (!$answer) {
-                $this->output->writeln("<red>Update aborted. Exiting...</red>");
-                exit;
+                $io->writeln('<red>Update aborted. Exiting...</red>');
+
+                return 1;
             }
         }
 
@@ -221,36 +218,40 @@ class UpdateCommand extends ConsoleCommand
         $args = new ArrayInput([
             'command' => 'install',
             'package' => $slugs,
-            '-f' => $this->input->getOption('force'),
+            '-f' => $input->getOption('force'),
             '-d' => $this->destination,
             '-y' => true
         ]);
-        $command_exec = $install_command->run($args, $this->output);
+        $command_exec = $install_command->run($args, $io);
 
         if ($command_exec != 0) {
-            $this->output->writeln("<red>Error:</red> An error occurred while trying to install the packages");
-            exit;
+            $io->writeln('<red>Error:</red> An error occurred while trying to install the packages');
+
+            return 1;
         }
+
+        return 0;
     }
 
     /**
-     * @param $only_packages
-     *
+     * @param array $only_packages
      * @return array
      */
-    private function userInputPackages($only_packages)
+    private function userInputPackages(array $only_packages): array
     {
+        $io = $this->getIO();
+
         $found = ['total' => 0];
         $ignore = [];
 
         if (!count($only_packages)) {
-            $this->output->writeln('');
+            $io->newLine();
         } else {
             foreach ($only_packages as $only_package) {
                 $find = $this->gpm->findPackage($only_package);
 
                 if (!$find || (!$this->overwrite && !$this->gpm->isUpdatable($find->slug))) {
-                    $name = isset($find->slug) ? $find->slug : $only_package;
+                    $name = $find->slug ?? $only_package;
                     $ignore[$name] = $name;
                 } else {
                     $found[$find->slug] = $find;
@@ -264,19 +265,22 @@ class UpdateCommand extends ConsoleCommand
                 $list = array_keys($list);
 
                 if ($found['total'] !== $this->data['total']) {
-                    $this->output->write(", only <magenta>" . $found['total'] . "</magenta> will be updated");
+                    $io->write(", only <magenta>{$found['total']}</magenta> will be updated");
                 }
 
-                $this->output->writeln('');
-                $this->output->writeln("Limiting updates for only <cyan>" . implode('</cyan>, <cyan>',
-                        $list) . "</cyan>");
+                $io->newLine();
+                $io->writeln('Limiting updates for only <cyan>' . implode(
+                    '</cyan>, <cyan>',
+                    $list
+                ) . '</cyan>');
             }
 
             if (count($ignore)) {
-                $this->output->writeln('');
-                $this->output->writeln("Packages not found or not requiring updates: <red>" . implode('</red>, <red>',
-                        $ignore) . "</red>");
-
+                $io->newLine();
+                $io->writeln('Packages not found or not requiring updates: <red>' . implode(
+                    '</red>, <red>',
+                    $ignore
+                ) . '</red>');
             }
         }
 

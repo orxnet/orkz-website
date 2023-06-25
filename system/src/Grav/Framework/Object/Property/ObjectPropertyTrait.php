@@ -1,12 +1,18 @@
 <?php
+
 /**
  * @package    Grav\Framework\Object
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
 namespace Grav\Framework\Object\Property;
+
+use InvalidArgumentException;
+use function array_key_exists;
+use function get_object_vars;
+use function is_callable;
 
 /**
  * Object Property Trait
@@ -23,21 +29,19 @@ namespace Grav\Framework\Object\Property;
  */
 trait ObjectPropertyTrait
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     private $_definedProperties;
 
     /**
      * @param array $elements
-     * @param string $key
-     * @throws \InvalidArgumentException
+     * @param string|null $key
+     * @throws InvalidArgumentException
      */
     public function __construct(array $elements = [], $key = null)
     {
         $this->initObjectProperties();
         $this->setElements($elements);
-        $this->setKey($key);
+        $this->setKey($key ?? '');
     }
 
     /**
@@ -103,7 +107,7 @@ trait ObjectPropertyTrait
     protected function &doGetProperty($property, $default = null, $doCreate = false)
     {
         if (!array_key_exists($property, $this->_definedProperties)) {
-            throw new \InvalidArgumentException("Property '{$property}' does not exist in the object!");
+            throw new InvalidArgumentException("Property '{$property}' does not exist in the object!");
         }
 
         if (empty($this->_definedProperties[$property])) {
@@ -124,12 +128,13 @@ trait ObjectPropertyTrait
     /**
      * @param string $property      Object property to be updated.
      * @param mixed  $value         New value.
-     * @throws \InvalidArgumentException
+     * @return void
+     * @throws InvalidArgumentException
      */
     protected function doSetProperty($property, $value)
     {
         if (!array_key_exists($property, $this->_definedProperties)) {
-            throw new \InvalidArgumentException("Property '{$property}' does not exist in the object!");
+            throw new InvalidArgumentException("Property '{$property}' does not exist in the object!");
         }
 
         $this->_definedProperties[$property] = true;
@@ -138,6 +143,7 @@ trait ObjectPropertyTrait
 
     /**
      * @param string  $property     Object property to be unset.
+     * @return void
      */
     protected function doUnsetProperty($property)
     {
@@ -146,9 +152,12 @@ trait ObjectPropertyTrait
         }
 
         $this->_definedProperties[$property] = false;
-        unset($this->{$property});
+        $this->{$property} = null;
     }
 
+    /**
+     * @return void
+     */
     protected function initObjectProperties()
     {
         $this->_definedProperties = [];
@@ -182,7 +191,10 @@ trait ObjectPropertyTrait
 
         $elements = [];
         foreach ($properties as $offset => $value) {
-            $elements[$offset] = $this->offsetSerialize($offset, $value);
+            $serialized = $this->offsetSerialize($offset, $value);
+            if ($serialized !== null) {
+                $elements[$offset] = $this->offsetSerialize($offset, $value);
+            }
         }
 
         return $elements;
@@ -190,6 +202,7 @@ trait ObjectPropertyTrait
 
     /**
      * @param array $elements
+     * @return void
      */
     protected function setElements(array $elements)
     {
@@ -197,7 +210,4 @@ trait ObjectPropertyTrait
             $this->setProperty($property, $value);
         }
     }
-
-    abstract public function setProperty($property, $value);
-    abstract protected function setKey($key);
 }

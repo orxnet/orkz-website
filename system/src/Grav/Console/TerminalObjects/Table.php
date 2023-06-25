@@ -1,15 +1,24 @@
 <?php
+
 /**
- * @package    Grav.Console
+ * @package    Grav\Console\TerminalObjects
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
 namespace Grav\Console\TerminalObjects;
 
+/**
+ * Class Table
+ * @package Grav\Console\TerminalObjects
+ * @deprecated 1.7 Use Symfony Console Table
+ */
 class Table extends \League\CLImate\TerminalObject\Basic\Table
 {
+    /**
+     * @return array
+     */
     public function result()
     {
         $this->column_widths = $this->getColumnWidths();

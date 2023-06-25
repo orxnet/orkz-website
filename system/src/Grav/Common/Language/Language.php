@@ -1,54 +1,98 @@
 <?php
+
 /**
- * @package    Grav.Common.Language
+ * @package    Grav\Common\Language
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
 namespace Grav\Common\Language;
 
+use Grav\Common\Debugger;
 use Grav\Common\Grav;
 use Grav\Common\Config\Config;
+use Negotiation\AcceptLanguage;
+use Negotiation\LanguageNegotiator;
+use function array_key_exists;
+use function count;
+use function in_array;
+use function is_array;
+use function is_string;
 
+/**
+ * Class Language
+ * @package Grav\Common\Language
+ */
 class Language
 {
+    /** @var Grav */
     protected $grav;
-    protected $enabled = true;
-    protected $languages = [];
-    protected $page_extensions = [];
-    protected $fallback_languages = [];
-    protected $default;
-    protected $active = null;
-
-    /** @var Config $config */
+    /** @var Config */
     protected $config;
-
+    /** @var bool */
+    protected $enabled = true;
+    /** @var array */
+    protected $languages = [];
+    /** @var array */
+    protected $fallback_languages = [];
+    /** @var array */
+    protected $fallback_extensions = [];
+    /** @var array */
+    protected $page_extensions = [];
+    /** @var string|false */
+    protected $default;
+    /** @var string|false */
+    protected $active;
+    /** @var array */
     protected $http_accept_language;
+    /** @var bool */
     protected $lang_in_url = false;
 
     /**
      * Constructor
      *
-     * @param \Grav\Common\Grav $grav
+     * @param Grav $grav
      */
     public function __construct(Grav $grav)
     {
         $this->grav = $grav;
         $this->config = $grav['config'];
-        $this->languages = $this->config->get('system.languages.supported', []);
+
+        $languages = $this->config->get('system.languages.supported', []);
+        foreach ($languages as &$language) {
+            $language = (string)$language;
+        }
+        unset($language);
+
+        $this->languages = $languages;
+
         $this->init();
     }
 
     /**
      * Initialize the default and enabled languages
+     *
+     * @return void
      */
     public function init()
     {
-        $this->default = reset($this->languages);
+        $default = $this->config->get('system.languages.default_lang');
+        if (null !== $default) {
+            $default = (string)$default;
+        }
+
+        // Note that reset returns false on empty languages.
+        $this->default = $default ?? reset($this->languages);
+
+        $this->resetFallbackPageExtensions();
 
         if (empty($this->languages)) {
+            // If no languages are set, turn of multi-language support.
             $this->enabled = false;
+        } elseif ($default && !in_array($default, $this->languages, true)) {
+            // If default language isn't in the language list, we need to add it.
+            array_unshift($this->languages, $default);
         }
     }
 
@@ -60,6 +104,16 @@ class Language
     public function enabled()
     {
         return $this->enabled;
+    }
+
+    /**
+     * Returns true if language debugging is turned on.
+     *
+     * @return bool
+     */
+    public function isDebug(): bool
+    {
+        return !$this->config->get('system.languages.translations', true);
     }
 
     /**
@@ -75,40 +129,49 @@ class Language
     /**
      * Sets the current supported languages manually
      *
-     * @param $langs
+     * @param array $langs
+     * @return void
      */
     public function setLanguages($langs)
     {
         $this->languages = $langs;
+
         $this->init();
     }
 
     /**
      * Gets a pipe-separated string of available languages
      *
+     * @param string|null $delimiter Delimiter to be quoted.
      * @return string
      */
-    public function getAvailable()
+    public function getAvailable($delimiter = null)
     {
         $languagesArray = $this->languages; //Make local copy
+
+        $languagesArray = array_map(static function ($value) use ($delimiter) {
+            return preg_quote($value, $delimiter);
+        }, $languagesArray);
+
         sort($languagesArray);
+
         return implode('|', array_reverse($languagesArray));
     }
 
     /**
      * Gets language, active if set, else default
      *
-     * @return mixed
+     * @return string|false
      */
     public function getLanguage()
     {
-        return $this->active ? $this->active : $this->default;
+        return $this->active ?: $this->default;
     }
 
     /**
      * Gets current default language
      *
-     * @return mixed
+     * @return string|false
      */
     public function getDefault()
     {
@@ -118,12 +181,12 @@ class Language
     /**
      * Sets default language manually
      *
-     * @param $lang
-     *
-     * @return bool
+     * @param string $lang
+     * @return string|bool
      */
     public function setDefault($lang)
     {
+        $lang = (string)$lang;
         if ($this->validate($lang)) {
             $this->default = $lang;
 
@@ -136,7 +199,7 @@ class Language
     /**
      * Gets current active language
      *
-     * @return mixed
+     * @return string|false
      */
     public function getActive()
     {
@@ -146,13 +209,17 @@ class Language
     /**
      * Sets active language manually
      *
-     * @param $lang
-     *
-     * @return bool
+     * @param string|false $lang
+     * @return string|false
      */
     public function setActive($lang)
     {
+        $lang = (string)$lang;
         if ($this->validate($lang)) {
+            /** @var Debugger $debugger */
+            $debugger = $this->grav['debugger'];
+            $debugger->addMessage('Active language set to ' . $lang, 'debug');
+
             $this->active = $lang;
 
             return $lang;
@@ -164,9 +231,8 @@ class Language
     /**
      * Sets the active language based on the first part of the URL
      *
-     * @param $uri
-     *
-     * @return mixed
+     * @param string $uri
+     * @return string
      */
     public function setActiveFromUri($uri)
     {
@@ -177,7 +243,7 @@ class Language
             // Try setting language from prefix of URL (/en/blah/blah).
             if (preg_match($regex, $uri, $matches)) {
                 $this->lang_in_url = true;
-                $this->active = $matches[2];
+                $this->setActive($matches[2]);
                 $uri = preg_replace("/\\" . $matches[1] . '/', '', $uri, 1);
 
                 // Store in session if language is different.
@@ -189,28 +255,21 @@ class Language
                 }
             } else {
                 // Try getting language from the session, else no active.
-                if (isset($this->grav['session']) && $this->grav['session']->isStarted()
-                    && $this->config->get('system.languages.session_store_active', true)) {
-                    $this->active = $this->grav['session']->active_language ?: null;
+                if (isset($this->grav['session']) && $this->grav['session']->isStarted() &&
+                    $this->config->get('system.languages.session_store_active', true)) {
+                    $this->setActive($this->grav['session']->active_language ?: null);
                 }
                 // if still null, try from http_accept_language header
-                if ($this->active === null && $this->config->get('system.languages.http_accept_language')) {
-                    $preferred = $this->getBrowserLanguages();
-                    foreach ($preferred as $lang) {
-                        if ($this->validate($lang)) {
-                            $this->active = $lang;
-                            break;
-                        }
-                    }
+                if ($this->active === null &&
+                    $this->config->get('system.languages.http_accept_language') &&
+                    $accept = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? false) {
+                    $negotiator = new LanguageNegotiator();
+                    $best_language = $negotiator->getBest($accept, $this->languages);
 
-                    // Repeat if not found, try base language only - fixes Safari sending the language code always
-                    // with a locale (e.g. it-it or fr-fr).
-                    foreach ($preferred as $lang) {
-                        $lang = substr($lang, 0, 2);
-                        if ($this->validate($lang)) {
-                            $this->active = $lang;
-                            break;
-                        }
+                    if ($best_language instanceof AcceptLanguage) {
+                        $this->setActive($best_language->getType());
+                    } else {
+                        $this->setActive($this->getDefault());
                     }
                 }
             }
@@ -220,13 +279,17 @@ class Language
     }
 
     /**
-     * Get's a URL prefix based on configuration
+     * Get a URL prefix based on configuration
      *
-     * @param null $lang
+     * @param string|null $lang
      * @return string
      */
     public function getLanguageURLPrefix($lang = null)
     {
+        if (!$this->enabled()) {
+            return '';
+        }
+
         // if active lang is not passed in, use current active
         if (!$lang) {
             $lang = $this->getLanguage();
@@ -238,21 +301,21 @@ class Language
     /**
      * Test to see if language is default and language should be included in the URL
      *
-     * @param null $lang
+     * @param string|null $lang
      * @return bool
      */
     public function isIncludeDefaultLanguage($lang = null)
     {
+        if (!$this->enabled()) {
+            return false;
+        }
+
         // if active lang is not passed in, use current active
         if (!$lang) {
             $lang = $this->getLanguage();
         }
 
-        if ($this->default == $lang && $this->config->get('system.languages.include_default_lang') === false) {
-            return false;
-        } else {
-            return true;
-        }
+        return !($this->default === $lang && $this->config->get('system.languages.include_default_lang') === false);
     }
 
     /**
@@ -265,45 +328,63 @@ class Language
         return (bool) $this->lang_in_url;
     }
 
+    /**
+     * Get full list of used language page extensions: [''=>'.md', 'en'=>'.en.md', ...]
+     *
+     * @param string|null $fileExtension
+     * @return array
+     */
+    public function getPageExtensions($fileExtension = null)
+    {
+        $fileExtension = $fileExtension ?: CONTENT_EXT;
+
+        if (!isset($this->fallback_extensions[$fileExtension])) {
+            $extensions[''] = $fileExtension;
+            foreach ($this->languages as $code) {
+                $extensions[$code] = ".{$code}{$fileExtension}";
+            }
+
+            $this->fallback_extensions[$fileExtension] = $extensions;
+        }
+
+        return $this->fallback_extensions[$fileExtension];
+    }
 
     /**
      * Gets an array of valid extensions with active first, then fallback extensions
      *
-     * @param string|null $file_ext
-     *
-     * @return array
+     * @param string|null $fileExtension
+     * @param string|null $languageCode
+     * @param bool $assoc  Return values in ['en' => '.en.md', ...] format.
+     * @return array Key is the language code, value is the file extension to be used.
      */
-    public function getFallbackPageExtensions($file_ext = null)
+    public function getFallbackPageExtensions(string $fileExtension = null, string $languageCode = null, bool $assoc = false)
     {
-        if (empty($this->page_extensions)) {
-            if (empty($file_ext)) {
-                $file_ext = CONTENT_EXT;
+        $fileExtension = $fileExtension ?: CONTENT_EXT;
+        $key = $fileExtension . '-' . ($languageCode ?? 'default') . '-' . (int)$assoc;
+
+        if (!isset($this->fallback_extensions[$key])) {
+            $all = $this->getPageExtensions($fileExtension);
+            $list = [];
+            $fallback = $this->getFallbackLanguages($languageCode, true);
+            foreach ($fallback as $code) {
+                $ext = $all[$code] ?? null;
+                if (null !== $ext) {
+                    $list[$code] = $ext;
+                }
+            }
+            if (!$assoc) {
+                $list = array_values($list);
             }
 
-            if ($this->enabled()) {
-                $valid_lang_extensions = [];
-                foreach ($this->languages as $lang) {
-                    $valid_lang_extensions[] = '.' . $lang . $file_ext;
-                }
-
-                if ($this->active) {
-                    $active_extension = '.' . $this->active . $file_ext;
-                    $key = array_search($active_extension, $valid_lang_extensions);
-                    unset($valid_lang_extensions[$key]);
-                    array_unshift($valid_lang_extensions, $active_extension);
-                }
-
-                $this->page_extensions = array_merge($valid_lang_extensions, (array)$file_ext);
-            } else {
-                $this->page_extensions = (array)$file_ext;
-            }
+            $this->fallback_extensions[$key] = $list;
         }
 
-        return $this->page_extensions;
+        return $this->fallback_extensions[$key];
     }
 
     /**
-     * Resets the page_extensions value.
+     * Resets the fallback_languages value.
      *
      * Useful to re-initialize the pages and change site language at runtime, example:
      *
@@ -312,63 +393,101 @@ class Language
      * $this->grav['language']->resetFallbackPageExtensions();
      * $this->grav['pages']->init();
      * ```
+     *
+     * @return void
      */
-    public function resetFallbackPageExtensions() {
-        $this->page_extensions = null;
+    public function resetFallbackPageExtensions()
+    {
+        $this->fallback_languages = [];
+        $this->fallback_extensions = [];
+        $this->page_extensions = [];
     }
 
     /**
-     * Gets an array of languages with active first, then fallback languages
+     * Gets an array of languages with active first, then fallback languages.
      *
+     *
+     * @param string|null  $languageCode
+     * @param bool $includeDefault  If true, list contains '', which can be used for default
      * @return array
      */
-    public function getFallbackLanguages()
+    public function getFallbackLanguages(string $languageCode = null, bool $includeDefault = false)
     {
-        if (empty($this->fallback_languages)) {
-            if ($this->enabled()) {
-                $fallback_languages = $this->languages;
-
-                if ($this->active) {
-                    $active_extension = $this->active;
-                    $key = array_search($active_extension, $fallback_languages);
-                    unset($fallback_languages[$key]);
-                    array_unshift($fallback_languages, $active_extension);
-                }
-                $this->fallback_languages = $fallback_languages;
-            }
-            // always add english in case a translation doesn't exist
-            $this->fallback_languages[] = 'en';
+        // Handle default.
+        if ($languageCode === '' || !$this->enabled()) {
+            return [''];
         }
 
-        return $this->fallback_languages;
+        $default = $this->getDefault() ?? 'en';
+        $active = $languageCode ?? $this->getActive() ?? $default;
+        $key = $active . '-' . (int)$includeDefault;
+
+        if (!isset($this->fallback_languages[$key])) {
+            $fallback = $this->config->get('system.languages.content_fallback.' . $active);
+            $fallback_languages = [];
+
+            if (null === $fallback && $this->config->get('system.languages.pages_fallback_only', false)) {
+                user_error('Configuration option `system.languages.pages_fallback_only` is deprecated since Grav 1.7, use `system.languages.content_fallback` instead', E_USER_DEPRECATED);
+
+                // Special fallback list returns itself and all the previous items in reverse order:
+                // active: 'v2', languages: ['v1', 'v2', 'v3', 'v4'] => ['v2', 'v1', '']
+                if ($includeDefault) {
+                    $fallback_languages[''] = '';
+                }
+                foreach ($this->languages as $code) {
+                    $fallback_languages[$code] = $code;
+                    if ($code === $active) {
+                        break;
+                    }
+                }
+                $fallback_languages = array_reverse($fallback_languages);
+            } else {
+                if (null === $fallback) {
+                    $fallback = [$default];
+                } elseif (!is_array($fallback)) {
+                    $fallback = is_string($fallback) && $fallback !== '' ? explode(',', $fallback) : [];
+                }
+                array_unshift($fallback, $active);
+                $fallback = array_unique($fallback);
+
+                foreach ($fallback as $code) {
+                    // Default fallback list has active language followed by default language and extensionless file:
+                    // active: 'fi', default: 'en', languages: ['sv', 'en', 'de', 'fi'] => ['fi', 'en', '']
+                    $fallback_languages[$code] = $code;
+                    if ($includeDefault && $code === $default) {
+                        $fallback_languages[''] = '';
+                    }
+                }
+            }
+
+            $fallback_languages = array_values($fallback_languages);
+
+            $this->fallback_languages[$key] = $fallback_languages;
+        }
+
+        return $this->fallback_languages[$key];
     }
 
     /**
      * Ensures the language is valid and supported
      *
-     * @param $lang
-     *
+     * @param string $lang
      * @return bool
      */
     public function validate($lang)
     {
-        if (in_array($lang, $this->languages)) {
-            return true;
-        }
-
-        return false;
+        return in_array($lang, $this->languages, true);
     }
 
     /**
      * Translate a key and possibly arguments into a string using current lang and fallbacks
      *
-     * @param mixed $args      The first argument is the lookup key value
+     * @param string|array $args      The first argument is the lookup key value
      *                         Other arguments can be passed and replaced in the translation with sprintf syntax
-     * @param array $languages
+     * @param array|null $languages
      * @param bool  $array_support
      * @param bool  $html_out
-     *
-     * @return string
+     * @return string|string[]
      */
     public function translate($args, array $languages = null, $array_support = false, $html_out = false)
     {
@@ -379,77 +498,68 @@ class Language
             $args = [];
         }
 
-        if ($this->config->get('system.languages.translations', true)) {
-            if ($this->enabled() && $lookup) {
-                if (empty($languages)) {
-                    if ($this->config->get('system.languages.translations_fallback', true)) {
-                        $languages = $this->getFallbackLanguages();
-                    } else {
-                        $languages = (array)$this->getLanguage();
-                    }
-                }
-            } else {
-                $languages = ['en'];
+        if (!$this->isDebug()) {
+            if ($lookup && $this->enabled() && empty($languages)) {
+                $languages = $this->getTranslatedLanguages();
             }
+
+            $languages = $languages ?: ['en'];
 
             foreach ((array)$languages as $lang) {
                 $translation = $this->getTranslation($lang, $lookup, $array_support);
 
                 if ($translation) {
-                    if (count($args) >= 1) {
+                    if (is_string($translation) && count($args) >= 1) {
                         return vsprintf($translation, $args);
-                    } else {
-                        return $translation;
                     }
+
+                    return $translation;
                 }
             }
+        } elseif ($array_support) {
+            return [$lookup];
         }
 
         if ($html_out) {
             return '<span class="untranslated">' . $lookup . '</span>';
-        } else {
-            return $lookup;
         }
+
+        return $lookup;
     }
 
     /**
      * Translate Array
      *
-     * @param      $key
-     * @param      $index
-     * @param null $languages
+     * @param string $key
+     * @param string $index
+     * @param array|null $languages
      * @param bool $html_out
-     *
      * @return string
      */
     public function translateArray($key, $index, $languages = null, $html_out = false)
     {
-        if ($this->config->get('system.languages.translations', true)) {
-            if ($this->enabled() && $key) {
-                if (empty($languages)) {
-                    if ($this->config->get('system.languages.translations_fallback', true)) {
-                        $languages = $this->getFallbackLanguages();
-                    } else {
-                        $languages = (array)$this->getDefault();
-                    }
-                }
-            } else {
-                $languages = ['en'];
-            }
+        if ($this->isDebug()) {
+            return $key . '[' . $index . ']';
+        }
 
-            foreach ((array)$languages as $lang) {
-                $translation_array = (array)Grav::instance()['languages']->get($lang . '.' . $key, null);
-                if ($translation_array && array_key_exists($index, $translation_array)) {
-                    return $translation_array[$index];
-                }
+        if ($key && empty($languages) && $this->enabled()) {
+            $languages = $this->getTranslatedLanguages();
+        }
+
+        $languages = $languages ?: ['en'];
+
+        foreach ((array)$languages as $lang) {
+            $translation_array = (array)Grav::instance()['languages']->get($lang . '.' . $key, null);
+            if ($translation_array && array_key_exists($index, $translation_array)) {
+                return $translation_array[$index];
             }
         }
 
         if ($html_out) {
             return '<span class="untranslated">' . $key . '[' . $index . ']</span>';
-        } else {
-            return $key . '[' . $index . ']';
         }
+
+        return $key . '[' . $index . ']';
     }
 
     /**
@@ -458,11 +568,14 @@ class Language
      * @param string $lang lang code
      * @param string $key  key to lookup with
      * @param bool $array_support
-     *
-     * @return string
+     * @return string|string[]
      */
     public function getTranslation($lang, $key, $array_support = false)
     {
+        if ($this->isDebug()) {
+            return $key;
+        }
+
         $translation = Grav::instance()['languages']->get($lang . '.' . $key, null);
         if (!$array_support && is_array($translation)) {
             return (string)array_shift($translation);
@@ -475,17 +588,21 @@ class Language
      * Get the browser accepted languages
      *
      * @param array $accept_langs
-     *
      * @return array
+     * @deprecated 1.6 No longer used - using content negotiation.
      */
     public function getBrowserLanguages($accept_langs = [])
     {
+        user_error(__CLASS__ . '::' . __FUNCTION__ . '() is deprecated since Grav 1.6, no longer used', E_USER_DEPRECATED);
+
         if (empty($this->http_accept_language)) {
             if (empty($accept_langs) && isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
                 $accept_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
             } else {
                 return $accept_langs;
             }
+
+            $langs = [];
 
             foreach (explode(',', $accept_langs) as $k => $pref) {
                 // split $pref again by ';q='
@@ -504,4 +621,43 @@ class Language
         return $this->http_accept_language;
     }
 
+    /**
+     * Accessible wrapper to LanguageCodes
+     *
+     * @param string $code
+     * @param string $type
+     * @return string|false
+     */
+    public function getLanguageCode($code, $type = 'name')
+    {
+        return LanguageCodes::get($code, $type);
+    }
+
+    /**
+     * @return array
+     */
+    #[\ReturnTypeWillChange]
+    public function __debugInfo()
+    {
+        $vars = get_object_vars($this);
+        unset($vars['grav'], $vars['config']);
+
+        return $vars;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getTranslatedLanguages(): array
+    {
+        if ($this->config->get('system.languages.translations_fallback', true)) {
+            $languages = $this->getFallbackLanguages();
+        } else {
+            $languages = [$this->getLanguage()];
+        }
+
+        $languages[] = 'en';
+
+        return array_values(array_unique($languages));
+    }
 }

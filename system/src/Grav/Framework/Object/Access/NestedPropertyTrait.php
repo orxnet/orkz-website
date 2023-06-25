@@ -1,14 +1,19 @@
 <?php
+
 /**
  * @package    Grav\Framework\Object
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
 namespace Grav\Framework\Object\Access;
 
 use Grav\Framework\Object\Interfaces\ObjectInterface;
+use RuntimeException;
+use stdClass;
+use function is_array;
+use function is_object;
 
 /**
  * Nested Property Object Trait
@@ -18,26 +23,26 @@ trait NestedPropertyTrait
 {
     /**
      * @param string $property      Object property name.
-     * @param string $separator     Separator, defaults to '.'
+     * @param string|null $separator     Separator, defaults to '.'
      * @return bool                 True if property has been defined (can be null).
      */
     public function hasNestedProperty($property, $separator = null)
     {
-        $test = new \stdClass;
+        $test = new stdClass;
 
         return $this->getNestedProperty($property, $test, $separator) !== $test;
     }
 
     /**
      * @param string $property      Object property to be fetched.
-     * @param mixed $default        Default value if property has not been set.
-     * @param string $separator     Separator, defaults to '.'
+     * @param mixed|null $default    Default value if property has not been set.
+     * @param string|null $separator Separator, defaults to '.'
      * @return mixed                Property value.
      */
     public function getNestedProperty($property, $default = null, $separator = null)
     {
         $separator = $separator ?: '.';
-        $path = explode($separator, $property);
+        $path = explode($separator, (string) $property);
         $offset = array_shift($path);
 
         if (!$this->hasProperty($offset)) {
@@ -72,10 +77,10 @@ trait NestedPropertyTrait
 
     /**
      * @param string $property      Object property to be updated.
-     * @param string $value         New value.
-     * @param string $separator     Separator, defaults to '.'
+     * @param mixed  $value         New value.
+     * @param string|null $separator     Separator, defaults to '.'
      * @return $this
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function setNestedProperty($property, $value, $separator = null)
     {
@@ -102,7 +107,7 @@ trait NestedPropertyTrait
                     $current[$offset] = [];
                 }
             } else {
-                throw new \RuntimeException('Cannot set nested property on non-array value');
+                throw new RuntimeException("Cannot set nested property {$property} on non-array value");
             }
 
             $current = &$current[$offset];
@@ -115,9 +120,9 @@ trait NestedPropertyTrait
 
     /**
      * @param string $property      Object property to be updated.
-     * @param string $separator     Separator, defaults to '.'
+     * @param string|null $separator     Separator, defaults to '.'
      * @return $this
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function unsetNestedProperty($property, $separator = null)
     {
@@ -146,7 +151,7 @@ trait NestedPropertyTrait
                     return $this;
                 }
             } else {
-                throw new \RuntimeException('Cannot set nested property on non-array value');
+                throw new RuntimeException("Cannot unset nested property {$property} on non-array value");
             }
 
             $current = &$current[$offset];
@@ -159,10 +164,10 @@ trait NestedPropertyTrait
 
     /**
      * @param string $property      Object property to be updated.
-     * @param string $default       Default value.
-     * @param string $separator     Separator, defaults to '.'
+     * @param mixed  $default       Default value.
+     * @param string|null $separator     Separator, defaults to '.'
      * @return $this
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function defNestedProperty($property, $default, $separator = null)
     {
@@ -172,11 +177,4 @@ trait NestedPropertyTrait
 
         return $this;
     }
-
-
-    abstract public function hasProperty($property);
-    abstract public function getProperty($property, $default = null);
-    abstract public function setProperty($property, $value);
-    abstract public function unsetProperty($property);
-    abstract protected function &doGetProperty($property, $default = null, $doCreate = false);
 }

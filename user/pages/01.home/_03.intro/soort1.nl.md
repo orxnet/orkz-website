@@ -1,24 +1,24 @@
 ---
-title: Inschrijven in het Oude RKZ
-bgcolor: '#A6C12F'
+title: 'Inschrijven in het Oude RKZ'
 menu: Inschrijven
+bgcolor: '#A6C12F'
 layout_classes: image_right
 ---
 
 Inschrijven in het ORKZ:<br/>De Intro
 ---------------------------------
 
-Wil je in het ORKZ wonen, schrijf je dan in bij de Intro. Antwoorden op je vragen omtrent de inschrijfprocedure lees je hieronder. Heb je een uitzonderlijke vraag, bel dan met de Intro. Ons telefoonnummer is 050-5267250. We zijn bereikbaar op donderdagmiddag tussen 14.00 uur en 18.00 uur. Je kunt ook je vraag via het contactformulier stellen. 
+Wil je in het ORKZ wonen, schrijf je dan in bij de Intro. Antwoorden op je vragen omtrent de inschrijfprocedure lees je hieronder. Heb je een uitzonderlijke vraag, bel dan met de Intro. Ons telefoonnummer is 050-5267250. We zijn bereikbaar op donderdagmiddag tussen 14.00 uur en 18.00 uur. Je kunt ook je vraag via het contactformulier stellen.
 
 ####Inschrijfprocedure
 
-**Inschrijving**: Inschrijven kun je elke donderdagavond om 20.00 uur op het kantoor van het ORKZ doen. Kom op tijd, want om stipt 20.00 uur gaat de deur gaat dicht. Je schrijft je dan in als aspirant-bewoner en krijgt dan het intro-praatje te horen waarbij we je vertellen over het wonen in het ORKZ. De inschrijving duurt ongeveer een half uur.  
+**Inschrijving**: Inschrijven kun je elke donderdagavond om 20.00 uur op het kantoor van het ORKZ doen. Kom op tijd, want om stipt 20.00 uur gaat de deur  dicht. Je schrijft je dan in als aspirant-bewoner en krijgt dan het intro-praatje te horen waarbij we je vertellen over het wonen in het ORKZ. De inschrijving duurt ongeveer een half uur.   
 
-**Rondleiding**: Tijdens de inschrijving geef je aan wanneer je de rondleiding wilt lopen. De rondleiding vindt eens per twee weken plaats op donderdagavond om 19.00 uur en duurt ongeveer een uur tot anderhalf uur. De rondleiders nemen je mee door het hele ORKZ. Hierna heb je een aardig beeld van wat het wonen in het ORKZ inhoudt.
+**Rondleiding**: Een onderdeel van de inschrijvingsprocedure is de rondleiding. Tijdens de inschrijving geef je aan wanneer je de rondleiding wilt lopen. De rondleiding vindt eens per twee weken plaats op donderdagavond om 19.00 uur en duurt ongeveer een uur tot anderhalf uur. De rondleiders nemen je mee door het hele ORKZ. Hierna heb je een aardig beeld van wat het wonen in het ORKZ inhoudt. 
 
-**Je brief inleveren**: Je kunt je brief tijdens de rondleiding afgeven, in de brievenbus in de deur van het kantoor stoppen, of langsbrengen wanneer het kantoor open is op maandagmiddag of donderdagmiddag tussen 14.00 en 16.00 uur. Vergeet niet om je telefoonnummer op je brief te zetten.
+**Je brief inleveren**: Een ander onderdeel van de inschrijving is een brief waarin je vertelt wie je bent, wat je zoal bezig houdt en waarin je vertelt wat je voor het ORKZ kunt beteken.Je kunt je brief per post sturen naar postbusnummer 6114, 9702 HC Groningen (ter attentie van de Intro), in de brievenbus in de deur van het kantoor stoppen, of langsbrengen wanneer het kantoor open is op donderdagmiddag tussen 14.00 en 18.00 uur. Vergeet niet om je telefoonnummer op je brief te zetten. Aangezien er drie brievenmappen in omloop zijn, is het handig om je brief in drievoud in te leveren.
 
-**Verlengen**: Vier weken na de inschrijving verleng je je inschrijving. Dit doe je telefonisch, door een briefje achter te laten, middels een notitie in het notulenboek op kantoor, of gewoon door even langs te komen. Vanaf nu zit je brief in de actieve map en kan een afdeling je uitnodigingen voor een kennismaking. 
+**Verlengen**: Vier weken na de inschrijving verleng je je inschrijving. Dit doe je telefonisch, door een briefje achter te laten, middels een notitie in het notulenboek op kantoor als het kantoor open is, of gewoon door even langs te komen. Niet per e-mail! Vanaf nu zit je brief in de actieve map en kan een afdeling je uitnodigingen voor een kennismaking. 
 
 Let op: elke vier weken verleng je je inschrijving opnieuw. Bij je verlenging vertelt de Intro je ook wanneer je volgende verlengmoment is. 
 

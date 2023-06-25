@@ -1,14 +1,18 @@
 <?php
+
 /**
- * @package    Grav.Common.Twig
+ * @package    Grav\Common\Twig
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
 namespace Grav\Common\Twig\TokenParser;
 
 use Grav\Common\Twig\Node\TwigNodeMarkdown;
+use Twig\Error\SyntaxError;
+use Twig\Token;
+use Twig\TokenParser\AbstractTokenParser;
 
 /**
  * Adds ability to inline markdown between tags.
@@ -20,33 +24,35 @@ use Grav\Common\Twig\Node\TwigNodeMarkdown;
  * 2. This is another item in that same list
  * {% endmarkdown %}
  */
-class TwigTokenParserMarkdown extends \Twig_TokenParser
+class TwigTokenParserMarkdown extends AbstractTokenParser
 {
     /**
-     * {@inheritdoc}
+     * @param Token $token
+     * @return TwigNodeMarkdown
+     * @throws SyntaxError
      */
-    public function parse(\Twig_Token $token)
+    public function parse(Token $token)
     {
         $lineno = $token->getLine();
-        $this->parser->getStream()->expect(\Twig_Token::BLOCK_END_TYPE);
-        $body = $this->parser->subparse(array($this, 'decideMarkdownEnd'), true);
-        $this->parser->getStream()->expect(\Twig_Token::BLOCK_END_TYPE);
+        $this->parser->getStream()->expect(Token::BLOCK_END_TYPE);
+        $body = $this->parser->subparse([$this, 'decideMarkdownEnd'], true);
+        $this->parser->getStream()->expect(Token::BLOCK_END_TYPE);
         return new TwigNodeMarkdown($body, $lineno, $this->getTag());
     }
     /**
      * Decide if current token marks end of Markdown block.
      *
-     * @param \Twig_Token $token
+     * @param Token $token
      * @return bool
      */
-    public function decideMarkdownEnd(\Twig_Token $token)
+    public function decideMarkdownEnd(Token $token): bool
     {
         return $token->test('endmarkdown');
     }
     /**
      * {@inheritdoc}
      */
-    public function getTag()
+    public function getTag(): string
     {
         return 'markdown';
     }

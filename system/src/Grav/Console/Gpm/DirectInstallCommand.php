@@ -1,33 +1,47 @@
 <?php
+
 /**
- * @package    Grav.Console
+ * @package    Grav\Console\Gpm
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
 namespace Grav\Console\Gpm;
 
+use Exception;
 use Grav\Common\Grav;
 use Grav\Common\Filesystem\Folder;
+use Grav\Common\HTTP\Response;
 use Grav\Common\GPM\GPM;
 use Grav\Common\GPM\Installer;
-use Grav\Common\GPM\Response;
-use Grav\Console\ConsoleCommand;
+use Grav\Console\GpmCommand;
+use RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use ZipArchive;
+use function is_array;
+use function is_callable;
 
-class DirectInstallCommand extends ConsoleCommand
+/**
+ * Class DirectInstallCommand
+ * @package Grav\Console\Gpm
+ */
+class DirectInstallCommand extends GpmCommand
 {
+    /** @var string */
+    protected $all_yes;
+    /** @var string */
+    protected $destination;
 
     /**
-     *
+     * @return void
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setName("direct-install")
+            ->setName('direct-install')
             ->setAliases(['directinstall'])
             ->addArgument(
                 'package-file',
@@ -47,221 +61,261 @@ class DirectInstallCommand extends ConsoleCommand
                 'The destination where the package should be installed at. By default this would be where the grav instance has been launched from',
                 GRAV_ROOT
             )
-            ->setDescription("Installs Grav, plugin, or theme directly from a file or a URL")
+            ->setDescription('Installs Grav, plugin, or theme directly from a file or a URL')
             ->setHelp('The <info>direct-install</info> command installs Grav, plugin, or theme directly from a file or a URL');
     }
 
     /**
-     * @return bool
+     * @return int
      */
-    protected function serve()
+    protected function serve(): int
     {
-        // Making sure the destination is usable
-        $this->destination = realpath($this->input->getOption('destination'));
+        $input = $this->getInput();
+        $io = $this->getIO();
 
-        if (
-            !Installer::isGravInstance($this->destination) ||
-            !Installer::isValidDestination($this->destination, [Installer::EXISTS, Installer::IS_LINK])
-        ) {
-            $this->output->writeln("<red>ERROR</red>: " . Installer::lastErrorMsg());
-            exit;
+        if (!class_exists(ZipArchive::class)) {
+            $io->title('Direct Install');
+            $io->error('php-zip extension needs to be enabled!');
+
+            return 1;
         }
 
+        // Making sure the destination is usable
+        $this->destination = realpath($input->getOption('destination'));
 
-        $this->all_yes = $this->input->getOption('all-yes');
+        if (!Installer::isGravInstance($this->destination) ||
+            !Installer::isValidDestination($this->destination, [Installer::EXISTS, Installer::IS_LINK])
+        ) {
+            $io->writeln('<red>ERROR</red>: ' . Installer::lastErrorMsg());
 
-        $package_file = $this->input->getArgument('package-file');
+            return 1;
+        }
 
-        $helper = $this->getHelper('question');
-        $question = new ConfirmationQuestion('Are you sure you want to direct-install <cyan>'.$package_file.'</cyan> [y|N] ', false);
+        $this->all_yes = $input->getOption('all-yes');
 
-        $answer = $this->all_yes ? true : $helper->ask($this->input, $this->output, $question);
+        $package_file = $input->getArgument('package-file');
+
+        $question = new ConfirmationQuestion("Are you sure you want to direct-install <cyan>{$package_file}</cyan> [y|N] ", false);
+
+        $answer = $this->all_yes ? true : $io->askQuestion($question);
 
         if (!$answer) {
-            $this->output->writeln("exiting...");
-            $this->output->writeln('');
-            exit;
+            $io->writeln('exiting...');
+            $io->newLine();
+
+            return 1;
         }
 
         $tmp_dir = Grav::instance()['locator']->findResource('tmp://', true, true);
-        $tmp_zip = $tmp_dir . '/Grav-' . uniqid();
+        $tmp_zip = $tmp_dir . uniqid('/Grav-', false);
 
-        $this->output->writeln("");
-        $this->output->writeln("Preparing to install <cyan>" . $package_file . "</cyan>");
+        $io->newLine();
+        $io->writeln("Preparing to install <cyan>{$package_file}</cyan>");
 
-
+        $zip = null;
         if (Response::isRemote($package_file)) {
-            $this->output->write("  |- Downloading package...     0%");
+            $io->write('  |- Downloading package...     0%');
             try {
                 $zip = GPM::downloadPackage($package_file, $tmp_zip);
-            } catch (\RuntimeException $e) {
-                $this->output->writeln('');
-                $this->output->writeln("  `- <red>ERROR: " . $e->getMessage() . "</red>");
-                $this->output->writeln('');
-                exit;
+            } catch (RuntimeException $e) {
+                $io->newLine();
+                $io->writeln("  `- <red>ERROR: {$e->getMessage()}</red>");
+                $io->newLine();
+
+                return 1;
             }
 
             if ($zip) {
-                $this->output->write("\x0D");
-                $this->output->write("  |- Downloading package...   100%");
-                $this->output->writeln('');
+                $io->write("\x0D");
+                $io->write('  |- Downloading package...   100%');
+                $io->newLine();
             }
-        } else {
-            $this->output->write("  |- Copying package...         0%");
+        } elseif (is_file($package_file)) {
+            $io->write('  |- Copying package...         0%');
             $zip = GPM::copyPackage($package_file, $tmp_zip);
             if ($zip) {
-                $this->output->write("\x0D");
-                $this->output->write("  |- Copying package...       100%");
-                $this->output->writeln('');
+                $io->write("\x0D");
+                $io->write('  |- Copying package...       100%');
+                $io->newLine();
             }
         }
 
-        if (file_exists($zip)) {
-            $tmp_source = $tmp_dir . '/Grav-' . uniqid();
+        if ($zip && file_exists($zip)) {
+            $tmp_source = $tmp_dir . uniqid('/Grav-', false);
 
-            $this->output->write("  |- Extracting package...    ");
+            $io->write('  |- Extracting package...    ');
             $extracted = Installer::unZip($zip, $tmp_source);
 
             if (!$extracted) {
-                $this->output->write("\x0D");
-                $this->output->writeln("  |- Extracting package...    <red>failed</red>");
+                $io->write("\x0D");
+                $io->writeln('  |- Extracting package...    <red>failed</red>');
                 Folder::delete($tmp_source);
                 Folder::delete($tmp_zip);
-                exit;
+
+                return 1;
             }
 
-            $this->output->write("\x0D");
-            $this->output->writeln("  |- Extracting package...    <green>ok</green>");
+            $io->write("\x0D");
+            $io->writeln('  |- Extracting package...    <green>ok</green>');
 
 
             $type = GPM::getPackageType($extracted);
 
             if (!$type) {
-                $this->output->writeln("  '- <red>ERROR: Not a valid Grav package</red>");
-                $this->output->writeln('');
+                $io->writeln("  '- <red>ERROR: Not a valid Grav package</red>");
+                $io->newLine();
                 Folder::delete($tmp_source);
                 Folder::delete($tmp_zip);
-                exit;
+
+                return 1;
             }
 
             $blueprint = GPM::getBlueprints($extracted);
             if ($blueprint) {
                 if (isset($blueprint['dependencies'])) {
-                    $depencencies = [];
+                    $dependencies = [];
                     foreach ($blueprint['dependencies'] as $dependency) {
-                        if (is_array($dependency)){
-                           if (isset($dependency['name'])) {
-                              $depencencies[] = $dependency['name'];
-                           }
-                           if (isset($dependency['github'])) {
-                              $depencencies[] = $dependency['github'];
-                           }
+                        if (is_array($dependency)) {
+                            if (isset($dependency['name'])) {
+                                $dependencies[] = $dependency['name'];
+                            }
+                            if (isset($dependency['github'])) {
+                                $dependencies[] = $dependency['github'];
+                            }
                         } else {
-                           $depencencies[] = $dependency;
+                            $dependencies[] = $dependency;
                         }
                     }
-                    $this->output->writeln("  |- Dependencies found...    <cyan>[" . implode(',', $depencencies) . "]</cyan>");
+                    $io->writeln('  |- Dependencies found...    <cyan>[' . implode(',', $dependencies) . ']</cyan>');
 
                     $question = new ConfirmationQuestion("  |  '- Dependencies will not be satisfied. Continue ? [y|N] ", false);
-                    $answer = $this->all_yes ? true : $helper->ask($this->input, $this->output, $question);
+                    $answer = $this->all_yes ? true : $io->askQuestion($question);
 
                     if (!$answer) {
-                        $this->output->writeln("exiting...");
-                        $this->output->writeln('');
+                        $io->writeln('exiting...');
+                        $io->newLine();
                         Folder::delete($tmp_source);
                         Folder::delete($tmp_zip);
-                        exit;
+
+                        return 1;
                     }
                 }
             }
 
-            if ($type == 'grav') {
-
-                $this->output->write("  |- Checking destination...  ");
+            if ($type === 'grav') {
+                $io->write('  |- Checking destination...  ');
                 Installer::isValidDestination(GRAV_ROOT . '/system');
                 if (Installer::IS_LINK === Installer::lastErrorCode()) {
-                    $this->output->write("\x0D");
-                    $this->output->writeln("  |- Checking destination...  <yellow>symbolic link</yellow>");
-                    $this->output->writeln("  '- <red>ERROR: symlinks found...</red> <yellow>" . GRAV_ROOT."</yellow>");
-                    $this->output->writeln('');
+                    $io->write("\x0D");
+                    $io->writeln('  |- Checking destination...  <yellow>symbolic link</yellow>');
+                    $io->writeln("  '- <red>ERROR: symlinks found...</red> <yellow>" . GRAV_ROOT . '</yellow>');
+                    $io->newLine();
                     Folder::delete($tmp_source);
                     Folder::delete($tmp_zip);
-                    exit;
+
+                    return 1;
                 }
 
-                $this->output->write("\x0D");
-                $this->output->writeln("  |- Checking destination...  <green>ok</green>");
+                $io->write("\x0D");
+                $io->writeln('  |- Checking destination...  <green>ok</green>');
 
-                $this->output->write("  |- Installing package...  ");
-                Installer::install($zip, GRAV_ROOT, ['sophisticated' => true, 'overwrite' => true, 'ignore_symlinks' => true], $extracted);
+                $io->write('  |- Installing package...  ');
+
+                $this->upgradeGrav($zip, $extracted);
             } else {
                 $name = GPM::getPackageName($extracted);
 
                 if (!$name) {
-                    $this->output->writeln("<red>ERROR: Name could not be determined.</red> Please specify with --name|-n");
-                    $this->output->writeln('');
+                    $io->writeln('<red>ERROR: Name could not be determined.</red> Please specify with --name|-n');
+                    $io->newLine();
                     Folder::delete($tmp_source);
                     Folder::delete($tmp_zip);
-                    exit;
+
+                    return 1;
                 }
 
                 $install_path = GPM::getInstallPath($type, $name);
                 $is_update = file_exists($install_path);
 
-                $this->output->write("  |- Checking destination...  ");
+                $io->write('  |- Checking destination...  ');
 
                 Installer::isValidDestination(GRAV_ROOT . DS . $install_path);
-                if (Installer::lastErrorCode() == Installer::IS_LINK) {
-                    $this->output->write("\x0D");
-                    $this->output->writeln("  |- Checking destination...  <yellow>symbolic link</yellow>");
-                    $this->output->writeln("  '- <red>ERROR: symlink found...</red>  <yellow>" . GRAV_ROOT . DS . $install_path . '</yellow>');
-                    $this->output->writeln('');
+                if (Installer::lastErrorCode() === Installer::IS_LINK) {
+                    $io->write("\x0D");
+                    $io->writeln('  |- Checking destination...  <yellow>symbolic link</yellow>');
+                    $io->writeln("  '- <red>ERROR: symlink found...</red>  <yellow>" . GRAV_ROOT . DS . $install_path . '</yellow>');
+                    $io->newLine();
                     Folder::delete($tmp_source);
                     Folder::delete($tmp_zip);
-                    exit;
 
-                } else {
-                    $this->output->write("\x0D");
-                    $this->output->writeln("  |- Checking destination...  <green>ok</green>");
+                    return 1;
                 }
 
-                $this->output->write("  |- Installing package...  ");
+                $io->write("\x0D");
+                $io->writeln('  |- Checking destination...  <green>ok</green>');
+
+                $io->write('  |- Installing package...  ');
 
                 Installer::install(
                     $zip,
                     $this->destination,
                     $options = [
                         'install_path' => $install_path,
-                        'theme' => (($type == 'theme')),
+                        'theme' => (($type === 'theme')),
                         'is_update' => $is_update
                     ],
                     $extracted
                 );
+
+                // clear cache after successful upgrade
+                $this->clearCache();
             }
 
             Folder::delete($tmp_source);
 
-            $this->output->write("\x0D");
+            $io->write("\x0D");
 
-            if(Installer::lastErrorCode()) {
-                $this->output->writeln("  '- <red>" . Installer::lastErrorMsg() . "</red>");
-                $this->output->writeln('');
+            if (Installer::lastErrorCode()) {
+                $io->writeln("  '- <red>" . Installer::lastErrorMsg() . '</red>');
+                $io->newLine();
             } else {
-                $this->output->writeln("  |- Installing package...    <green>ok</green>");
-                $this->output->writeln("  '- <green>Success!</green>  ");
-                $this->output->writeln('');
+                $io->writeln('  |- Installing package...    <green>ok</green>');
+                $io->writeln("  '- <green>Success!</green>  ");
+                $io->newLine();
             }
-
         } else {
-            $this->output->writeln("  '- <red>ERROR: ZIP package could not be found</red>");
+            $io->writeln("  '- <red>ERROR: ZIP package could not be found</red>");
+            Folder::delete($tmp_zip);
+
+            return 1;
         }
 
         Folder::delete($tmp_zip);
 
-        // clear cache after successful upgrade
-        $this->clearCache();
+        return 0;
+    }
 
-        return true;
+    /**
+     * @param string $zip
+     * @param string $folder
+     * @return void
+     */
+    private function upgradeGrav(string $zip, string $folder): void
+    {
+        if (!is_dir($folder)) {
+            Installer::setError('Invalid source folder');
+        }
 
+        try {
+            $script = $folder . '/system/install.php';
+            /** Install $installer */
+            if ((file_exists($script) && $install = include $script) && is_callable($install)) {
+                $install($zip);
+            } else {
+                throw new RuntimeException('Uploaded archive file is not a valid Grav update package');
+            }
+        } catch (Exception $e) {
+            Installer::setError($e->getMessage());
+        }
     }
 }

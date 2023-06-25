@@ -1,91 +1,115 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * @package    Grav\Framework\File\Formatter
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
 namespace Grav\Framework\File\Formatter;
 
+use Grav\Framework\File\Interfaces\FileFormatterInterface;
+use RuntimeException;
 use Symfony\Component\Yaml\Exception\DumpException;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml as YamlParser;
 use RocketTheme\Toolbox\Compat\Yaml\Yaml as FallbackYamlParser;
+use function function_exists;
 
-class YamlFormatter implements FormatterInterface
+/**
+ * Class YamlFormatter
+ * @package Grav\Framework\File\Formatter
+ */
+class YamlFormatter extends AbstractFormatter
 {
-    /** @var array */
-    private $config;
-
+    /**
+     * YamlFormatter constructor.
+     * @param array $config
+     */
     public function __construct(array $config = [])
     {
-        $this->config = $config + [
+        $config += [
             'file_extension' => '.yaml',
             'inline' => 5,
             'indent' => 2,
             'native' => true,
             'compat' => true
         ];
+
+        parent::__construct($config);
     }
 
     /**
-     * @deprecated 1.5 Use $formatter->getDefaultFileExtension() instead.
+     * @return int
      */
-    public function getFileExtension()
+    public function getInlineOption(): int
     {
-        user_error(__CLASS__ . '::' . __FUNCTION__ . '() is deprecated since Grav 1.5, use getDefaultFileExtension() method instead', E_USER_DEPRECATED);
-
-        return $this->getDefaultFileExtension();
+        return $this->getConfig('inline');
     }
 
     /**
-     * {@inheritdoc}
+     * @return int
      */
-    public function getDefaultFileExtension()
+    public function getIndentOption(): int
     {
-        $extensions = $this->getSupportedFileExtensions();
-
-        return (string) reset($extensions);
+        return $this->getConfig('indent');
     }
 
     /**
-     * {@inheritdoc}
+     * @return bool
      */
-    public function getSupportedFileExtensions()
+    public function useNativeDecoder(): bool
     {
-        return (array) $this->config['file_extension'];
+        return $this->getConfig('native');
     }
 
     /**
-     * {@inheritdoc}
+     * @return bool
      */
-    public function encode($data, $inline = null, $indent = null)
+    public function useCompatibleDecoder(): bool
+    {
+        return $this->getConfig('compat');
+    }
+
+    /**
+     * @param array $data
+     * @param int|null $inline
+     * @param int|null $indent
+     * @return string
+     * @see FileFormatterInterface::encode()
+     */
+    public function encode($data, $inline = null, $indent = null): string
     {
         try {
-            return (string) YamlParser::dump(
+            return YamlParser::dump(
                 $data,
-                $inline ? (int) $inline : $this->config['inline'],
-                $indent ? (int) $indent : $this->config['indent'],
+                $inline ? (int) $inline : $this->getInlineOption(),
+                $indent ? (int) $indent : $this->getIndentOption(),
                 YamlParser::DUMP_EXCEPTION_ON_INVALID_TYPE
             );
         } catch (DumpException $e) {
-            throw new \RuntimeException('Encoding YAML failed: ' . $e->getMessage(), 0, $e);
+            throw new RuntimeException('Encoding YAML failed: ' . $e->getMessage(), 0, $e);
         }
     }
 
     /**
      * {@inheritdoc}
+     * @see FileFormatterInterface::decode()
      */
-    public function decode($data)
+    public function decode($data): array
     {
         // Try native PECL YAML PHP extension first if available.
-        if ($this->config['native'] && function_exists('yaml_parse')) {
+        if (function_exists('yaml_parse') && $this->useNativeDecoder()) {
             // Safely decode YAML.
             $saved = @ini_get('yaml.decode_php');
-            @ini_set('yaml.decode_php', 0);
+            @ini_set('yaml.decode_php', '0');
             $decoded = @yaml_parse($data);
-            @ini_set('yaml.decode_php', $saved);
+            if ($saved !== false) {
+                @ini_set('yaml.decode_php', $saved);
+            }
 
             if ($decoded !== false) {
                 return (array) $decoded;
@@ -95,11 +119,11 @@ class YamlFormatter implements FormatterInterface
         try {
             return (array) YamlParser::parse($data);
         } catch (ParseException $e) {
-            if ($this->config['compat']) {
+            if ($this->useCompatibleDecoder()) {
                 return (array) FallbackYamlParser::parse($data);
             }
 
-            throw new \RuntimeException('Decoding YAML failed: ' . $e->getMessage(), 0, $e);
+            throw new RuntimeException('Decoding YAML failed: ' . $e->getMessage(), 0, $e);
         }
     }
 }

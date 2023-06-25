@@ -1,8 +1,9 @@
 <?php
+
 /**
- * @package    Grav.Common.Config
+ * @package    Grav\Common\Config
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
@@ -13,19 +14,42 @@ use Grav\Common\Grav;
 use Grav\Common\Data\Data;
 use Grav\Common\Service\ConfigServiceProvider;
 use Grav\Common\Utils;
+use function is_array;
 
+/**
+ * Class Config
+ * @package Grav\Common\Config
+ */
 class Config extends Data
 {
     /** @var string */
-    protected $checksum;
-    protected $modified = false;
-    protected $timestamp = 0;
+    public $environment;
 
+    /** @var string */
+    protected $key;
+    /** @var string */
+    protected $checksum;
+    /** @var int */
+    protected $timestamp = 0;
+    /** @var bool */
+    protected $modified = false;
+
+    /**
+     * @return string
+     */
     public function key()
     {
-        return $this->checksum();
+        if (null === $this->key) {
+            $this->key = md5($this->checksum . $this->timestamp);
+        }
+
+        return $this->key;
     }
 
+    /**
+     * @param string|null $checksum
+     * @return string|null
+     */
     public function checksum($checksum = null)
     {
         if ($checksum !== null) {
@@ -35,6 +59,10 @@ class Config extends Data
         return $this->checksum;
     }
 
+    /**
+     * @param bool|null $modified
+     * @return bool
+     */
     public function modified($modified = null)
     {
         if ($modified !== null) {
@@ -44,6 +72,10 @@ class Config extends Data
         return $this->modified;
     }
 
+    /**
+     * @param int|null $timestamp
+     * @return int
+     */
     public function timestamp($timestamp = null)
     {
         if ($timestamp !== null) {
@@ -53,6 +85,9 @@ class Config extends Data
         return $this->timestamp;
     }
 
+    /**
+     * @return $this
+     */
     public function reload()
     {
         $grav = Grav::instance();
@@ -75,6 +110,9 @@ class Config extends Data
         return $this;
     }
 
+    /**
+     * @return void
+     */
     public function debug()
     {
         /** @var Debugger $debugger */
@@ -86,6 +124,9 @@ class Config extends Data
         }
     }
 
+    /**
+     * @return void
+     */
     public function init()
     {
         $setup = Grav::instance()['setup']->toArray();
@@ -98,14 +139,13 @@ class Config extends Data
             }
         }
 
-        // Override the media.upload_limit based on PHP values
-        $upload_limit = Utils::getUploadLimit();
-        $this->items['system']['media']['upload_limit'] = $upload_limit > 0 ? $upload_limit : 1024*1024*1024;
+        // Legacy value - Override the media.upload_limit based on PHP values
+        $this->items['system']['media']['upload_limit'] = Utils::getUploadLimit();
     }
 
     /**
      * @return mixed
-     * @deprecated
+     * @deprecated 1.5 Use Grav::instance()['languages'] instead.
      */
     public function getLanguages()
     {

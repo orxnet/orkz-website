@@ -1,42 +1,30 @@
 <?php
+
 /**
- * @package    Grav.Console
+ * @package    Grav\Console\Cli
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
 namespace Grav\Console\Cli;
 
-use Grav\Console\ConsoleCommand;
+use Grav\Console\GravCommand;
 use Symfony\Component\Console\Input\InputOption;
 
-class ComposerCommand extends ConsoleCommand
+/**
+ * Class ComposerCommand
+ * @package Grav\Console\Cli
+ */
+class ComposerCommand extends GravCommand
 {
     /**
-     * @var
+     * @return void
      */
-    protected $config;
-    /**
-     * @var
-     */
-    protected $local_config;
-    /**
-     * @var
-     */
-    protected $destination;
-    /**
-     * @var
-     */
-    protected $user_path;
-
-    /**
-     *
-     */
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setName("composer")
+            ->setName('composer')
             ->addOption(
                 'install',
                 'i',
@@ -49,24 +37,28 @@ class ComposerCommand extends ConsoleCommand
                 InputOption::VALUE_NONE,
                 'update the dependencies'
             )
-            ->setDescription("Updates the composer vendor dependencies needed by Grav.")
+            ->setDescription('Updates the composer vendor dependencies needed by Grav.')
             ->setHelp('The <info>composer</info> command updates the composer vendor dependencies needed by Grav');
     }
 
     /**
-     * @return int|null|void
+     * @return int
      */
-    protected function serve()
+    protected function serve(): int
     {
-        $action = $this->input->getOption('install') ? 'install' : ($this->input->getOption('update') ? 'update' : 'install');
+        $input = $this->getInput();
+        $io = $this->getIO();
 
-        if ($this->input->getOption('install')) {
+        $action = $input->getOption('install') ? 'install' : ($input->getOption('update') ? 'update' : 'install');
+
+        if ($input->getOption('install')) {
             $action = 'install';
         }
 
         // Updates composer first
-        $this->output->writeln("\nInstalling vendor dependencies");
-        $this->output->writeln($this->composerUpdate(GRAV_ROOT, $action));
-    }
+        $io->writeln("\nInstalling vendor dependencies");
+        $io->writeln($this->composerUpdate(GRAV_ROOT, $action));
 
+        return 0;
+    }
 }

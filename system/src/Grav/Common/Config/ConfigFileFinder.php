@@ -1,17 +1,25 @@
 <?php
+
 /**
- * @package    Grav.Common.Config
+ * @package    Grav\Common\Config
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
 namespace Grav\Common\Config;
 
+use DirectoryIterator;
 use Grav\Common\Filesystem\Folder;
+use RecursiveDirectoryIterator;
 
+/**
+ * Class ConfigFileFinder
+ * @package Grav\Common\Config
+ */
 class ConfigFileFinder
 {
+    /** @var string */
     protected $base = '';
 
     /**
@@ -39,6 +47,7 @@ class ConfigFileFinder
         foreach ($paths as $folder) {
             $list += $this->detectRecursive($folder, $pattern, $levels);
         }
+
         return $list;
     }
 
@@ -60,6 +69,7 @@ class ConfigFileFinder
 
             $list += $files[trim($path, '/')];
         }
+
         return $list;
     }
 
@@ -77,6 +87,7 @@ class ConfigFileFinder
         foreach ($paths as $folder) {
             $list = array_merge_recursive($list, $this->detectAll($folder, $pattern, $levels));
         }
+
         return $list;
     }
 
@@ -95,6 +106,7 @@ class ConfigFileFinder
         foreach ($folders as $folder) {
             $list += $this->detectInFolder($folder, $filename);
         }
+
         return $list;
     }
 
@@ -102,7 +114,7 @@ class ConfigFileFinder
      * Find filename from a list of folders.
      *
      * @param array $folders
-     * @param string $filename
+     * @param string|null $filename
      * @return array
      */
     public function locateInFolders(array $folders, $filename = null)
@@ -112,6 +124,7 @@ class ConfigFileFinder
             $path = trim(Folder::getRelativePath($folder), '/');
             $list[$path] = $this->detectInFolder($folder, $filename);
         }
+
         return $list;
     }
 
@@ -165,7 +178,7 @@ class ConfigFileFinder
                 'filters' => [
                     'pre-key' => $this->base,
                     'key' => $pattern,
-                    'value' => function (\RecursiveDirectoryIterator $file) use ($path) {
+                    'value' => function (RecursiveDirectoryIterator $file) use ($path) {
                         return ['file' => "{$path}/{$file->getSubPathname()}", 'modified' => $file->getMTime()];
                     }
                 ],
@@ -186,7 +199,7 @@ class ConfigFileFinder
      * Detects all directories with the lookup file and returns them with last modification time.
      *
      * @param  string $folder Location to look up from.
-     * @param  string $lookup Filename to be located (defaults to directory name).
+     * @param  string|null $lookup Filename to be located (defaults to directory name).
      * @return array
      * @internal
      */
@@ -199,9 +212,7 @@ class ConfigFileFinder
         $list = [];
 
         if (is_dir($folder)) {
-            $iterator = new \DirectoryIterator($folder);
-
-            /** @var \DirectoryIterator $directory */
+            $iterator = new DirectoryIterator($folder);
             foreach ($iterator as $directory) {
                 if (!$directory->isDir() || $directory->isDot()) {
                     continue;
@@ -243,7 +254,7 @@ class ConfigFileFinder
                 'filters' => [
                     'pre-key' => $this->base,
                     'key' => $pattern,
-                    'value' => function (\RecursiveDirectoryIterator $file) use ($path) {
+                    'value' => function (RecursiveDirectoryIterator $file) use ($path) {
                         return ["{$path}/{$file->getSubPathname()}" => $file->getMTime()];
                     }
                 ],

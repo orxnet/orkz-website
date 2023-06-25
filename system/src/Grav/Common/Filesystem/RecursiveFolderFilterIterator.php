@@ -1,30 +1,43 @@
 <?php
+
 /**
- * @package    Grav.Common.FileSystem
+ * @package    Grav\Common\Filesystem
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
 namespace Grav\Common\Filesystem;
 
 use Grav\Common\Grav;
+use RecursiveIterator;
+use SplFileInfo;
+use function in_array;
 
+/**
+ * Class RecursiveFolderFilterIterator
+ * @package Grav\Common\Filesystem
+ */
 class RecursiveFolderFilterIterator extends \RecursiveFilterIterator
 {
-    protected static $folder_ignores;
+    /** @var array */
+    protected static $ignore_folders;
 
     /**
      * Create a RecursiveFilterIterator from a RecursiveIterator
      *
-     * @param \RecursiveIterator $iterator
+     * @param RecursiveIterator $iterator
+     * @param array $ignore_folders
      */
-    public function __construct(\RecursiveIterator $iterator)
+    public function __construct(RecursiveIterator $iterator, $ignore_folders = [])
     {
         parent::__construct($iterator);
-        if (empty($this::$folder_ignores)) {
-            $this::$folder_ignores = Grav::instance()['config']->get('system.pages.ignore_folders');
+
+        if (empty($ignore_folders)) {
+            $ignore_folders = Grav::instance()['config']->get('system.pages.ignore_folders');
         }
+
+        $this::$ignore_folders = $ignore_folders;
     }
 
     /**
@@ -34,12 +47,9 @@ class RecursiveFolderFilterIterator extends \RecursiveFilterIterator
      */
     public function accept()
     {
-        /** @var $current \SplFileInfo */
+        /** @var SplFileInfo $current */
         $current = $this->current();
 
-        if ($current->isDir() && !in_array($current->getFilename(), $this::$folder_ignores, true)) {
-            return true;
-        }
-        return false;
+        return $current->isDir() && !in_array($current->getFilename(), $this::$ignore_folders, true);
     }
 }

@@ -1,8 +1,9 @@
 <?php
+
 /**
- * @package    Grav.Common.GPM
+ * @package    Grav\Common\GPM
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
@@ -10,6 +11,10 @@ namespace Grav\Common\GPM\Local;
 
 use Grav\Common\GPM\Common\CachedCollection;
 
+/**
+ * Class Packages
+ * @package Grav\Common\GPM\Local
+ */
 class Packages extends CachedCollection
 {
     public function __construct()

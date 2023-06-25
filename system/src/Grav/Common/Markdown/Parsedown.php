@@ -1,26 +1,43 @@
 <?php
+
 /**
- * @package    Grav.Common.Markdown
+ * @package    Grav\Common\Markdown
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
 namespace Grav\Common\Markdown;
 
+use Grav\Common\Page\Interfaces\PageInterface;
+use Grav\Common\Page\Markdown\Excerpts;
+
+/**
+ * Class Parsedown
+ * @package Grav\Common\Markdown
+ */
 class Parsedown extends \Parsedown
 {
+
     use ParsedownGravTrait;
 
     /**
      * Parsedown constructor.
      *
-     * @param $page
-     * @param $defaults
+     * @param Excerpts|PageInterface|null $excerpts
+     * @param array|null $defaults
      */
-    public function __construct($page, $defaults)
+    public function __construct($excerpts = null, $defaults = null)
     {
-        $this->init($page, $defaults);
-    }
+        if (!$excerpts || $excerpts instanceof PageInterface || null !== $defaults) {
+            // Deprecated in Grav 1.6.10
+            if ($defaults) {
+                $defaults = ['markdown' => $defaults];
+            }
+            $excerpts = new Excerpts($excerpts, $defaults);
+            user_error(__CLASS__ . '::' . __FUNCTION__ . '($page, $defaults) is deprecated since Grav 1.6.10, use new ' . __CLASS__ . '(new ' . Excerpts::class . '($page, [\'markdown\' => $defaults])) instead.', E_USER_DEPRECATED);
+        }
 
+        $this->init($excerpts, $defaults);
+    }
 }

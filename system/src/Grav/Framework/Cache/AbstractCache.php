@@ -1,14 +1,16 @@
 <?php
+
 /**
  * @package    Grav\Framework\Cache
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
 namespace Grav\Framework\Cache;
 
-use Grav\Framework\Cache\Exception\InvalidArgumentException;
+use DateInterval;
+use Psr\SimpleCache\InvalidArgumentException;
 
 /**
  * Cache trait for PSR-16 compatible "Simple Cache" implementation
@@ -20,7 +22,7 @@ abstract class AbstractCache implements CacheInterface
 
     /**
      * @param string $namespace
-     * @param null|int|\DateInterval $defaultLifetime
+     * @param null|int|DateInterval $defaultLifetime
      * @throws InvalidArgumentException
      */
     public function __construct($namespace = '', $defaultLifetime = null)

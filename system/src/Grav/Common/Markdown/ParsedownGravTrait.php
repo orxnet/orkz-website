@@ -1,64 +1,97 @@
 <?php
+
 /**
- * @package    Grav.Common.Markdown
+ * @package    Grav\Common\Markdown
  *
- * @copyright  Copyright (C) 2015 - 2018 Trilby Media, LLC. All rights reserved.
+ * @copyright  Copyright (c) 2015 - 2023 Trilby Media, LLC. All rights reserved.
  * @license    MIT License; see LICENSE file for details.
  */
 
 namespace Grav\Common\Markdown;
 
-use Grav\Common\Grav;
-use Grav\Common\Helpers\Excerpts;
-use Grav\Common\Page\Page;
-use RocketTheme\Toolbox\Event\Event;
+use Grav\Common\Page\Markdown\Excerpts;
+use Grav\Common\Page\Interfaces\PageInterface;
+use function call_user_func_array;
+use function in_array;
+use function strlen;
 
+/**
+ * Trait ParsedownGravTrait
+ * @package Grav\Common\Markdown
+ */
 trait ParsedownGravTrait
 {
-    /** @var Page $page */
-    protected $page;
-
-    protected $special_chars;
-    protected $twig_link_regex = '/\!*\[(?:.*)\]\((\{([\{%#])\s*(.*?)\s*(?:\2|\})\})\)/';
-
+    /** @var array */
     public $completable_blocks = [];
+    /** @var array */
     public $continuable_blocks = [];
+    public $plugins = [];
+
+    /** @var Excerpts */
+    protected $excerpts;
+    /** @var array */
+    protected $special_chars;
+    /** @var string */
+    protected $twig_link_regex = '/\!*\[(?:.*)\]\((\{([\{%#])\s*(.*?)\s*(?:\2|\})\})\)/';
 
     /**
      * Initialization function to setup key variables needed by the MarkdownGravLinkTrait
      *
-     * @param $page
-     * @param $defaults
+     * @param PageInterface|Excerpts|null $excerpts
+     * @param array|null $defaults
+     * @return void
      */
-    protected function init($page, $defaults)
+    protected function init($excerpts = null, $defaults = null)
     {
-        $grav = Grav::instance();
-
-        $this->page = $page;
-        $this->BlockTypes['{'] [] = 'TwigTag';
-        $this->special_chars = ['>' => 'gt', '<' => 'lt', '"' => 'quot'];
-
-        if ($defaults === null) {
-            $defaults = Grav::instance()['config']->get('system.pages.markdown');
+        if (!$excerpts || $excerpts instanceof PageInterface) {
+            // Deprecated in Grav 1.6.10
+            if ($defaults) {
+                $defaults = ['markdown' => $defaults];
+            }
+            $this->excerpts = new Excerpts($excerpts, $defaults);
+            user_error(__CLASS__ . '::' . __FUNCTION__ . '($page, $defaults) is deprecated since Grav 1.6.10, use ->init(new ' . Excerpts::class . '($page, [\'markdown\' => $defaults])) instead.', E_USER_DEPRECATED);
+        } else {
+            $this->excerpts = $excerpts;
         }
 
-        $this->setBreaksEnabled($defaults['auto_line_breaks']);
-        $this->setUrlsLinked($defaults['auto_url_links']);
-        $this->setMarkupEscaped($defaults['escape_markup']);
-        $this->setSpecialChars($defaults['special_chars']);
+        $this->BlockTypes['{'][] = 'TwigTag';
+        $this->special_chars = ['>' => 'gt', '<' => 'lt', '"' => 'quot'];
 
-        $grav->fireEvent('onMarkdownInitialized', new Event(['markdown' => $this]));
+        $defaults = $this->excerpts->getConfig();
 
+        if (isset($defaults['markdown']['auto_line_breaks'])) {
+            $this->setBreaksEnabled($defaults['markdown']['auto_line_breaks']);
+        }
+        if (isset($defaults['markdown']['auto_url_links'])) {
+            $this->setUrlsLinked($defaults['markdown']['auto_url_links']);
+        }
+        if (isset($defaults['markdown']['escape_markup'])) {
+                $this->setMarkupEscaped($defaults['markdown']['escape_markup']);
+        }
+        if (isset($defaults['markdown']['special_chars'])) {
+            $this->setSpecialChars($defaults['markdown']['special_chars']);
+        }
+
+        $this->excerpts->fireInitializedEvent($this);
+    }
+
+    /**
+     * @return Excerpts
+     */
+    public function getExcerpts()
+    {
+        return $this->excerpts;
     }
 
     /**
      * Be able to define a new Block type or override an existing one
      *
-     * @param $type
-     * @param $tag
+     * @param string $type
+     * @param string $tag
      * @param bool $continuable
      * @param bool $completable
-     * @param $index
+     * @param int|null $index
+     * @return void
      */
     public function addBlockType($type, $tag, $continuable = false, $completable = false, $index = null)
     {
@@ -87,9 +120,10 @@ trait ParsedownGravTrait
     /**
      * Be able to define a new Inline type or override an existing one
      *
-     * @param $type
-     * @param $tag
-     * @param $index
+     * @param string $type
+     * @param string $tag
+     * @param int|null $index
+     * @return void
      */
     public function addInlineType($type, $tag, $index = null)
     {
@@ -107,13 +141,13 @@ trait ParsedownGravTrait
     /**
      * Overrides the default behavior to allow for plugin-provided blocks to be continuable
      *
-     * @param $Type
-     *
+     * @param string $Type
      * @return bool
      */
     protected function isBlockContinuable($Type)
     {
-        $continuable = \in_array($Type, $this->continuable_blocks) || method_exists($this, 'block' . $Type . 'Continue');
+        $continuable = in_array($Type, $this->continuable_blocks, true)
+            || method_exists($this, 'block' . $Type . 'Continue');
 
         return $continuable;
     }
@@ -121,13 +155,13 @@ trait ParsedownGravTrait
     /**
      *  Overrides the default behavior to allow for plugin-provided blocks to be completable
      *
-     * @param $Type
-     *
+     * @param string $Type
      * @return bool
      */
     protected function isBlockCompletable($Type)
     {
-        $completable = \in_array($Type, $this->completable_blocks) || method_exists($this, 'block' . $Type . 'Complete');
+        $completable = in_array($Type, $this->completable_blocks, true)
+            || method_exists($this, 'block' . $Type . 'Complete');
 
         return $completable;
     }
@@ -137,7 +171,6 @@ trait ParsedownGravTrait
      * Make the element function publicly accessible, Medium uses this to render from Twig
      *
      * @param  array $Element
-     *
      * @return string markup
      */
     public function elementToHtml(array $Element)
@@ -148,8 +181,7 @@ trait ParsedownGravTrait
     /**
      * Setter for special chars
      *
-     * @param $special_chars
-     *
+     * @param array $special_chars
      * @return $this
      */
     public function setSpecialChars($special_chars)
@@ -174,6 +206,10 @@ trait ParsedownGravTrait
         return null;
     }
 
+    /**
+     * @param array $excerpt
+     * @return array|null
+     */
     protected function inlineSpecialCharacter($excerpt)
     {
         if ($excerpt['text'][0] === '&' && !preg_match('/^&#?\w+;/', $excerpt['text'])) {
@@ -193,6 +229,10 @@ trait ParsedownGravTrait
         return null;
     }
 
+    /**
+     * @param array $excerpt
+     * @return array
+     */
     protected function inlineImage($excerpt)
     {
         if (preg_match($this->twig_link_regex, $excerpt['text'], $matches)) {
@@ -209,19 +249,19 @@ trait ParsedownGravTrait
 
         // if this is an image process it
         if (isset($excerpt['element']['attributes']['src'])) {
-            $excerpt = Excerpts::processImageExcerpt($excerpt, $this->page);
+            $excerpt = $this->excerpts->processImageExcerpt($excerpt);
         }
 
         return $excerpt;
     }
 
+    /**
+     * @param array $excerpt
+     * @return array
+     */
     protected function inlineLink($excerpt)
     {
-        if (isset($excerpt['type'])) {
-            $type = $excerpt['type'];
-        } else {
-            $type = 'link';
-        }
+        $type = $excerpt['type'] ?? 'link';
 
         // do some trickery to get around Parsedown requirement for valid URL if its Twig in there
         if (preg_match($this->twig_link_regex, $excerpt['text'], $matches)) {
@@ -237,21 +277,43 @@ trait ParsedownGravTrait
 
         // if this is a link
         if (isset($excerpt['element']['attributes']['href'])) {
-            $excerpt = Excerpts::processLinkExcerpt($excerpt, $this->page, $type);
+            $excerpt = $this->excerpts->processLinkExcerpt($excerpt, $type);
         }
 
         return $excerpt;
     }
 
-    // For extending this class via plugins
+    /**
+     * For extending this class via plugins
+     *
+     * @param string $method
+     * @param array $args
+     * @return mixed|null
+     */
+    #[\ReturnTypeWillChange]
     public function __call($method, $args)
     {
-        if (isset($this->{$method}) === true) {
+
+        if (isset($this->plugins[$method]) === true) {
+            $func = $this->plugins[$method];
+
+            return call_user_func_array($func, $args);
+        } elseif (isset($this->{$method}) === true) {
             $func = $this->{$method};
 
-            return  \call_user_func_array($func, $args);
+            return call_user_func_array($func, $args);
         }
 
         return null;
     }
+
+    public function __set($name, $value)
+    {
+        if (is_callable($value)) {
+            $this->plugins[$name] = $value;
+        }
+
+    }
+
+
 }
